@@ -39,6 +39,7 @@ int segment(int arr[], int a, int b) {
 }
 
 void qsort(int arr[], int a, int b) {
+	//implementing quicksort algorithm to sort user input, in case the user's naughty and inputs values in non-increasing order
     int c;
     if (a < b) {
         c = segment(arr, a, b);
@@ -48,6 +49,7 @@ void qsort(int arr[], int a, int b) {
 }
 
 int active_id(int current_id, int number_of_players) {
+    //first check next available id to be active, then return it
     if (current_id < number_of_players) {
         return current_id + 1;
     }
@@ -57,6 +59,7 @@ int active_id(int current_id, int number_of_players) {
 
 }
 void fill_greens(Deck* deck, int number_of_greens, int green_value) {
+	//fil a green_cards array in a Deck structure with values specified by the user 
     for (int i = 0; i < number_of_greens; i++) {
         deck->green_cards[i] = green_value;
     }
@@ -65,16 +68,16 @@ void fill_greens(Deck* deck, int number_of_greens, int green_value) {
 
 
 
-void fill_deck(Deck* deck, int cauldrons, int card_values[MAXDECKSIZE]) 
-{
+void fill_deck(Deck* deck, int cauldrons, int card_values[MAXDECKSIZE]) {
     int i = 0;
+	
     switch (cauldrons) {
     case 1:
         while (card_values[i] != 0) {
             deck->blue_cards[i] = card_values[i];
             i++;
         }
-        break;
+		break;
     case 2:
         while(card_values[i] !=0) {
             deck->blue_cards[i] = card_values[i];
