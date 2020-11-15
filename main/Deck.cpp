@@ -1,10 +1,16 @@
+
+#ifndef DECK
+#define DECK
 #define MAXDECKSIZE 20
 
 struct Deck {
-	int blue_cards[MAXDECKSIZE];
-	int red_cards[MAXDECKSIZE];
-	int violet_cards[MAXDECKSIZE];
-	int yellow_cards[MAXDECKSIZE];
-	int white_cards[MAXDECKSIZE];
-	int black_cards[MAXDECKSIZE];
+	int green_cards[MAXDECKSIZE] = { 0 };
+	int blue_cards[MAXDECKSIZE] = { 0 };
+	int red_cards[MAXDECKSIZE] = { 0 };
+	int violet_cards[MAXDECKSIZE] = { 0 };
+	int yellow_cards[MAXDECKSIZE] = { 0 };
+	int white_cards[MAXDECKSIZE] = { 0 };
+	int black_cards[MAXDECKSIZE] = { 0 };
 };
+
+#endif
