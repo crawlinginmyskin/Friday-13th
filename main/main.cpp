@@ -90,14 +90,14 @@ void fill_deck(Deck* deck, int cauldrons, int card_values[MAXDECKSIZE])
     switch (cauldrons)
 	{
     case 1:
-        while (card_values[i] != 0) 
+        while (card_values[i] != 0)
         {
             deck->blue_cards[i] = card_values[i];
             i++;
         }
 		break;
     case 2:
-        while(card_values[i] !=0) 
+        while (card_values[i] !=0)
         {
             deck->blue_cards[i] = card_values[i];
             deck->red_cards[i] = card_values[i];
@@ -105,7 +105,7 @@ void fill_deck(Deck* deck, int cauldrons, int card_values[MAXDECKSIZE])
         }
         break;
     case 3:
-        while (card_values[i] != 0) 
+        while (card_values[i] != 0)
         {
             deck->blue_cards[i] = card_values[i];
             deck->red_cards[i] = card_values[i];
@@ -114,7 +114,7 @@ void fill_deck(Deck* deck, int cauldrons, int card_values[MAXDECKSIZE])
         }
         break;
     case 4:
-        while (card_values[i] != 0) 
+        while (card_values[i] != 0)
         {
             deck->blue_cards[i] = card_values[i];
             deck->red_cards[i] = card_values[i];
@@ -125,7 +125,7 @@ void fill_deck(Deck* deck, int cauldrons, int card_values[MAXDECKSIZE])
         break;
 
     case 5:
-        while (card_values[i] != 0) 
+        while (card_values[i] != 0)
         {
             deck->blue_cards[i] = card_values[i];
             deck->red_cards[i] = card_values[i];
@@ -136,7 +136,7 @@ void fill_deck(Deck* deck, int cauldrons, int card_values[MAXDECKSIZE])
         }
         break;
     case 6:
-        while (card_values[i] != 0) 
+        while (card_values[i] != 0)
         {
             
             deck->blue_cards[i] = card_values[i];
@@ -156,19 +156,21 @@ void fill_deck(Deck* deck, int cauldrons, int card_values[MAXDECKSIZE])
 void deal_cards(Game* game, int number_of_greens)
 //the function deals cards to players, starting from player 1 and with green cards
 {
-    int i = 0;
     int number_of_cards = 0;
     int last_dealt = 0;
 	
-    while (game->main_deck.blue_cards[i] != 0) 
-    {
-        i++;
-        number_of_cards++;
-    }
+	for(int i = 0; i < MAXDECKSIZE; i++)
+	{
+		if(game->main_deck.blue_cards[i] != 0)
+		{
+            number_of_cards++;
+		}
+	}
+
     
     for (int j = 0; j < number_of_greens; j++) 
     {
-        game->players[j % game->number_of_players].hand.green_cards[j / game->number_of_players] = game->main_deck.green_cards[j];
+        game->players[j % game->number_of_players].hand.green_cards[j/ game->number_of_players] = game->main_deck.green_cards[j];
         last_dealt = j % game->number_of_players;
     }
 
@@ -364,7 +366,7 @@ int main()
     std::cin >> number_of_cards;
     assert((number_of_cards >= 1) && (number_of_cards <= MAXDECKSIZE));
     
-    int card_values[MAXDECKSIZE] ={0};
+    int card_values[MAXDECKSIZE+1] ={0};
     
     for (int i = 0; i < number_of_cards; i++) 
     {
@@ -378,9 +380,8 @@ int main()
   
     fill_greens(&game.main_deck, number_of_greens, value_of_greens);
     fill_deck(&game.main_deck, game.number_of_cauldrons, card_values);
-    deal_cards(&game, number_of_greens);
+	deal_cards(&game, number_of_greens);
 
-    int a = 0;
     
     std::cout << "active player = " << active << std::endl;
     std::cout << "players number = " << game.number_of_players << std::endl;
