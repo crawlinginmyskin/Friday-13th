@@ -5,6 +5,8 @@
 
 
 struct Player {
+	int handcards = 0;
+	int deckcards = 0;
 	int points=0;
 	Deck hand;
 	Deck deck;

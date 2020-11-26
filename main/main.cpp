@@ -5,6 +5,7 @@
 #include "Game.cpp"
 #include <cassert>
 
+#define MAXINPUTSIZE 1000000
 #define MAXCAULDRONS 6
 
 const char COLORS[MAXCAULDRONS][7] = { "blue", "red", "violet", "yellow", "white", "black" };
@@ -86,18 +87,18 @@ void fill_greens(Deck* deck, int number_of_greens, int green_value)
 void fill_deck(Deck* deck, int cauldrons, int card_values[MAXDECKSIZE])
 {
     int i = 0;
-	
+
     switch (cauldrons)
-	{
+    {
     case 1:
         while (card_values[i] != 0)
         {
             deck->blue_cards[i] = card_values[i];
             i++;
         }
-		break;
+        break;
     case 2:
-        while (card_values[i] !=0)
+        while (card_values[i] != 0)
         {
             deck->blue_cards[i] = card_values[i];
             deck->red_cards[i] = card_values[i];
@@ -138,7 +139,7 @@ void fill_deck(Deck* deck, int cauldrons, int card_values[MAXDECKSIZE])
     case 6:
         while (card_values[i] != 0)
         {
-            
+
             deck->blue_cards[i] = card_values[i];
             deck->red_cards[i] = card_values[i];
             deck->violet_cards[i] = card_values[i];
@@ -149,8 +150,7 @@ void fill_deck(Deck* deck, int cauldrons, int card_values[MAXDECKSIZE])
         }
         break;
     }
-} 
-
+}
 
 
 void deal_cards(Game* game, int number_of_greens)
@@ -179,7 +179,7 @@ void deal_cards(Game* game, int number_of_greens)
     for (int j = 0 ; j < number_of_cards * game->number_of_cauldrons; j++) 
     {
         last_dealt = active_id(last_dealt, game->number_of_players);
-        int color =  j / number_of_cards; //UWAGA
+        int color =  j / number_of_cards;
         int position = 0;
         switch (color)
     	{
@@ -330,7 +330,75 @@ void print_deck(Game* game)
 	}
 }
 
-
+void count_cards(Game* game)
+{
+    int count_cards[MAXPLAYERS * 2] = {0};
+	for (int i =0; i < game->number_of_players; i++)
+	{
+        for(int j=0; j<MAXDECKSIZE; j++)
+        {
+	        if(game->players[i].hand.blue_cards[j]!=0)
+	        {
+                count_cards[2 * i]++;
+	        }
+            if (game->players[i].hand.red_cards[j] != 0)
+            {
+                count_cards[2 * i]++;
+            }
+            if (game->players[i].hand.violet_cards[j] != 0)
+            {
+                count_cards[2 * i]++;
+            }
+            if (game->players[i].hand.yellow_cards[j] != 0)
+            {
+                count_cards[2 * i]++;
+            }
+            if (game->players[i].hand.white_cards[j] != 0)
+            {
+                count_cards[2 * i]++;
+            }
+            if (game->players[i].hand.black_cards[j] != 0)
+            {
+                count_cards[2 * i]++;
+            }
+            if (game->players[i].deck.blue_cards[j] != 0)
+            {
+                count_cards[(2 * i) +1]++;
+            }
+            if (game->players[i].deck.red_cards[j] != 0)
+            {
+                count_cards[(2 * i) + 1]++;
+            }
+            if (game->players[i].deck.violet_cards[j] != 0)
+            {
+                count_cards[(2 * i) + 1]++;
+            }
+            if (game->players[i].deck.yellow_cards[j] != 0)
+            {
+                count_cards[(2 * i) + 1]++;
+            }
+            if (game->players[i].deck.white_cards[j] != 0)
+            {
+                count_cards[(2 * i) + 1]++;
+            }
+            if (game->players[i].deck.black_cards[j] != 0)
+            {
+                count_cards[(2 * i) + 1]++;
+            }
+        	if (game->players[i].hand.green_cards[j] != 0)
+        	{
+                count_cards[2 * i]++;
+        	}
+        	if(game->players[i].deck.green_cards[j] !=0)
+        	{
+                count_cards[(2 * i) + 1]++;
+        	}
+        }
+        std::cout << i+1 << " Player has " << count_cards[2 * i] << " cards in hand" << std::endl;
+        std::cout << i+1 << " Player has " << count_cards[(2 * i) + 1] << " cards in front of him" << std::endl;
+		
+	}
+}
 
 void print_cauldrons(Game* game)
 {
@@ -347,18 +415,22 @@ int main()
     int active = 1;
     Game game;
 
-    
+    /*
     std::cin >> game.number_of_players;
     assert((game.number_of_players >= 2) && (game.number_of_players <= 6));
+    
 
     std::cin >> game.number_of_cauldrons;
     assert((game.number_of_cauldrons >= 1) && (game.number_of_cauldrons <= 6));
-    
+   
+	
     int number_of_greens;
     std::cin >> number_of_greens;
     assert((number_of_greens >= 1) && (number_of_greens <=9));
-    
-    int value_of_greens; 
+
+
+
+	int value_of_greens; 
     std::cin >> value_of_greens;
     assert((value_of_greens >= 1) && (value_of_greens <= 10));
     
@@ -377,17 +449,97 @@ int main()
 
     
     qsort(card_values, 0, number_of_cards - 1);
-  
+
+
+   
+
+
+
     fill_greens(&game.main_deck, number_of_greens, value_of_greens);
     fill_deck(&game.main_deck, game.number_of_cauldrons, card_values);
 	deal_cards(&game, number_of_greens);
 
+	*/
+
+    char input[MAXINPUTSIZE];
+    int cards[2 * MAXPLAYERS] = {0};
+    int playerToken = 0;
+    game.number_of_cauldrons = 0;
+    int cauldrons[MAXCAULDRONS] = {0};
+	while (fgets(input, MAXINPUTSIZE,stdin))
+	{
+		if(input[0] == '\n')
+		{
+            break; //end loop if you encounter end of line symbol as the first letter of a line
+		}
+		if (input[0] == 'p')
+		{
+            game.number_of_players = input[17] - 48; //get amount of players from user input/save file
+		}
+        int cardcounter = 0;
+
+        if (input[0] >= '0' && input[0] <= '9')
+        {
+            if (input[3] == 'i') //pile card counting
+            {
+                int i = 1;
+                while (input[i]) 
+                {
+                    if (input[i] >= '0' && input[i] <= '9')
+                    {
+                        if (input[i + 1] >= '0' && input[i + 1] <= '9')
+                        {
+                            i++;
+                        }
+                        cardcounter++;
+                    }
+                    i++;
+                }
+                cauldrons[game.number_of_cauldrons++] = cardcounter;
+            }
+            else 
+            {
+	            int i = 1;
+                while (input[i]) //player hand/deck counting
+                {
+                    if (input[i] >= '0' && input[i] <= '9')
+                    {
+                        if (input[i + 1] >= '0' && input[i + 1] <= '9')
+                        {
+                            i++;
+                        }
+                        cardcounter++;
+                    }
+                    i++;
+                }
+                cards[playerToken++] = cardcounter;
+            }
+
+
+            
+        }
+	}
+    /*
+     SOLUTION TO TASK 3 ON STOS
+	for (int i = 0; i < game.number_of_players ;i++)
+	{
+        std::cout << i + 1 << " player has " << cards[2 * i] << " cards on hand" << std::endl;
+        std::cout << i + 1 << " player has " << cards[(2 * i) + 1] << " cards in front of him" << std::endl;
+	}
+
+    for (int i=0; i<game.number_of_cauldrons; i++)
+    {
+        std::cout << "there are " << cauldrons[i] << " cards on " << i + 1 << " pile " << std::endl;
+    }
     
-    std::cout << "active player = " << active << std::endl;
-    std::cout << "players number = " << game.number_of_players << std::endl;
+	*/
+
+	
+    /* SOLUTION TO TASKS 1/2 ON STOS
     print_deck(&game);
     print_cauldrons(&game);
-	
+    count_cards(&game);
+    */
 	
     return 0;
 }
