@@ -3,12 +3,14 @@
 #include "Deck.cpp"
 #include "Player.cpp"
 #include "Game.cpp"
-#include <cassert>
+//#include <cassert>
 
-#define MAXINPUTSIZE 1000000
+
+
+#define MAXINPUTSIZE 10000
 #define MAXCAULDRONS 6
 
-const char COLORS[MAXCAULDRONS][7] = { "blue", "red", "violet", "yellow", "white", "black" };
+const char COLORS[MAXCAULDRONS+1][7] = { "blue", "red", "violet", "yellow", "white", "black", "green" };
 
 int segment(int arr[], int a, int b)
 {
@@ -73,12 +75,14 @@ int active_id(int current_id, int number_of_players)
 
 
 
-void fill_greens(Deck* deck, int number_of_greens, int green_value)
+void fill_greens(Card deck[MAXDECKUPDATED], int number_of_greens, int green_value)
 {
 	//fil a green_cards array in a Deck structure with values specified by the user 
-    for (int i = 0; i < number_of_greens; i++) 
+    for (int i = 0; i < number_of_greens; i++)
     {
-        deck->green_cards[i] = green_value;
+        deck[i].value = green_value;
+        //strcpy(deck[i].color, COLORS[6]);
+    	
     }
 }
 
@@ -488,113 +492,160 @@ void count_cards(char input[MAXINPUTSIZE], Game& game, int cards[2 * MAXPLAYERS]
     }
 }
 
+void color_check(char input[MAXINPUTSIZE], int colorcheck[MAXCAULDRONS][MAXDECKSIZE], int j, int color )
+{
+    int unique = 0;
+    for (int k = 0; k < MAXDECKSIZE; k++) {
+        if (colorcheck[color][k] == 0 && unique == 0)
+        {
+            if (input[j - 3] == 32)
+            {
+                colorcheck[color][k] = input[j - 2] - 48;
+                unique = 1;
+            }
+            else
+            {
+                colorcheck[color][k] = (input[j - 3] - 48) * 10 + (input[j - 2] - 48);
+                unique = 1;
+            }
+        }
+    }
+
+}
+
+
 
 
 int main()
 {
     int active = 1;
     Game game;
+    //Card main_deck[MAXDECKUPDATED];
+    //game.number_of_greens = 4;
+    //game.value_of_greens = 4;
+    //fill_greens(main_deck, game.number_of_greens, game.value_of_greens);
+
+
+
+
+   // std::cout << main_deck[0].value;
+
+
 
     /*
     THIS IS NEEDED FOR TASKS 1/2
     std::cin >> game.number_of_players;
     assert((game.number_of_players >= 2) && (game.number_of_players <= 6));
-    
+
 
     std::cin >> game.number_of_cauldrons;
     assert((game.number_of_cauldrons >= 1) && (game.number_of_cauldrons <= 6));
-   
-	
+
+
     int number_of_greens;
     std::cin >> number_of_greens;
     assert((number_of_greens >= 1) && (number_of_greens <=9));
 
 
 
-	int value_of_greens; 
+    int value_of_greens;
     std::cin >> value_of_greens;
     assert((value_of_greens >= 1) && (value_of_greens <= 10));
-    
+
     int number_of_cards;
     std::cin >> number_of_cards;
     assert((number_of_cards >= 1) && (number_of_cards <= MAXDECKSIZE));
-    
+
     int card_values[MAXDECKSIZE+1] ={0};
-    
-    for (int i = 0; i < number_of_cards; i++) 
+
+    for (int i = 0; i < number_of_cards; i++)
     {
         int value;
         std::cin >> value;
         card_values[i] = value;
     }
 
-    
+
     qsort(card_values, 0, number_of_cards - 1);
 
 
-   
+
 
 
 
     fill_greens(&game.main_deck, number_of_greens, value_of_greens);
     fill_deck(&game.main_deck, game.number_of_cauldrons, card_values);
-	deal_cards(&game, number_of_greens);
+    deal_cards(&game, number_of_greens);
 
-	*/
+    */
     int cauldrons[MAXCAULDRONS] = { 0 };
     char input[MAXINPUTSIZE];
     int cards[2 * MAXPLAYERS] = { 0 };
     int colorcounter[MAXCAULDRONS] = { 0 };
-	
-	while (fgets(input, MAXINPUTSIZE,stdin))
-	{
-		if(input[0] == '\n')
-		{
+    int colorcheck[MAXCAULDRONS][MAXDECKSIZE] = { 0 };
+
+    while (fgets(input, MAXINPUTSIZE, stdin))
+    {
+        if (input[0] == '\n')
+        {
             break; //end loop if you encounter end of line symbol as the first letter of a line
-		}
-		if (input[0] == 'p')
-		{
+        }
+        if (input[0] == 'p')
+        {
             game.number_of_players = input[17] - 48; //get amount of players from user input/save file
-		}
-        
+        }
+        if (input[0] == 'e')
+        {
+            game.explosion_threshold = (input[22] - 48) * 10 + (input[23] - 48);
+        }
+
         count_cards(input, game, cards, cauldrons);
 
 
         int i = 1;
-        while (input[i]) 
+        while (input[i])
         {
-            if (input[i] == ':') 
+            if (input[i] == ':')
             {
                 int j = i;
-            	while(input[j])
-            	{
-            		if(input[j] == 'b' && input[j+1]=='l' && input[j+2] == 'u')
-            		{
+                while (input[j])
+                {
+                    if (input[j] == 'b' && input[j + 1] == 'l' && input[j + 2] == 'u')
+                    {
                         colorcounter[0]++;
-            		}
+                        color_check(input, colorcheck, j, 0);
+
+
+                    }
                     else if (input[j] == 'r' && input[j + 1] == 'e' && input[j + 2] == 'd')
                     {
                         colorcounter[1]++;
+                        color_check(input, colorcheck, j, 1);
                     }
                     else if (input[j] == 'y' && input[j + 1] == 'e' && input[j + 2] == 'l')
                     {
-                        colorcounter[2]++;
+                        colorcounter[3]++;
+                        color_check(input, colorcheck, j, 3);
+
                     }
                     else if (input[j] == 'v' && input[j + 1] == 'i' && input[j + 2] == 'o')
                     {
-                        colorcounter[3]++;
+                        colorcounter[2]++;
+                        color_check(input, colorcheck, j, 2);
                     }
                     else if (input[j] == 'w' && input[j + 1] == 'h' && input[j + 2] == 'i')
                     {
                         colorcounter[4]++;
+                        color_check(input, colorcheck, j, 4);
                     }
                     else if (input[j] == 'b' && input[j + 1] == 'l' && input[j + 2] == 'a')
                     {
                         colorcounter[5]++;
+                        color_check(input, colorcheck, j, 5);
                     }
                     j++;
-            	}
-                
+                }
+
             }
             i++;
 
@@ -602,22 +653,66 @@ int main()
 
 
 
-        	
 
 
-            
+
+
     }
+    /*
+    REQUIRED FOR TASK 4A
     int card_check = 1;
-    for (int i = 1; i <MAXCAULDRONS; i++)
+    for (int i = 1; i < MAXCAULDRONS; i++)
     {
-	    if (colorcounter[0] != colorcounter[i] && colorcounter[i] != 0)
-	    {
+        if (colorcounter[0] != colorcounter[i] && colorcounter[i] != 0)
+        {
             card_check = 0;
-	    }
+        }
+    }
+    */
+    for (int i = 0; i < MAXCAULDRONS; i++)
+    {
+        qsort(colorcheck[i], 0, MAXDECKSIZE - 1);
+    }
+    int cardsdifferent = 0;
+    for (int i = 0; i < game.number_of_cauldrons-1; i++)
+    {
+        for (int j = 0; j < MAXDECKSIZE; j++)
+        {
+            if (colorcheck[i][j] != colorcheck[i + 1][j])
+            {
+                cardsdifferent = 1;
+            }
+        }
     }
 
+    if (cardsdifferent == 0) {
+        std::cout << "The values of cards of all colors are identical:" << std::endl;
+        for (int i = 0; i < MAXDECKSIZE; i++) 
+        {
+            if (colorcheck[0][i] != 0) {
+                std::cout << colorcheck[0][i] << " ";
+            }
+        }
+    }
+    else 
+    {
+        std::cout << "The values of cards of all colors are not identical:" << std::endl;
+        for (int i = 0; i < game.number_of_cauldrons; i++)
+        {
+            std::cout << COLORS[i] << " cards values: ";
+            for (int j = 0; j < MAXDECKSIZE; j++)
+            {
+                if (colorcheck[i][j] != 0)
+                {
+                    std::cout << colorcheck[i][j] << " ";
+                }
+            }
+            std::cout<<std::endl;
+        }
+    }
 
-
+    /*
+    SOLUTION TO TASK 4A
     if (card_check==1)
     {
         std::cout << "The number cards of all colors is equal: " << colorcounter[0] << std::endl;
@@ -634,6 +729,7 @@ int main()
             }
         }
     }
+    */
 	
     /*
      SOLUTION TO TASK 3 ON STOS
