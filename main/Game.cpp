@@ -1,6 +1,8 @@
-#include "Deck.cpp""
+#include "Deck.cpp"
 #include "Player.cpp"
+#include "Cauldron.cpp"
 #define MAXPLAYERS 6
+#define MAXCAULDRONS 6
 
 struct Game {
 	int explosion_threshold = 0;
@@ -10,5 +12,6 @@ struct Game {
 	int value_of_greens = 0;
 	Deck main_deck;
 	Player players[MAXPLAYERS];
+	Deck cauldrons[MAXCAULDRONS];
 	int active_index = 1;
 };

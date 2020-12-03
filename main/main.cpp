@@ -3,28 +3,29 @@
 #include "Deck.cpp"
 #include "Player.cpp"
 #include "Game.cpp"
+#include <string.h>
 //#include <cassert>
 
 
 
 #define MAXINPUTSIZE 10000
-#define MAXCAULDRONS 6
+#define CARDSINCAULDRON 100
 
-const char COLORS[MAXCAULDRONS+1][7] = { "blue", "red", "violet", "yellow", "white", "black", "green" };
+const char COLORS[MAXCAULDRONS + 1][7] = { "green", "blue", "red", "violet", "yellow", "white", "black" };
 
 int segment(int arr[], int a, int b)
 {
     //division of a table into two parts, one where all elements are smaller than arr[a], second where all elements are bigger or equal arr[a]
-    
+
     int x = arr[a];
     int i = a, j = b, c;
-    while (true) 
+    while (true)
     {
-        while (arr[j] > x) 
+        while (arr[j] > x)
         {
             j--;
         }
-        while (arr[i] < x) 
+        while (arr[i] < x)
         {
             i++;
         }
@@ -36,7 +37,7 @@ int segment(int arr[], int a, int b)
             i++;
             j--;
         }
-        else 
+        else
         {
             return j;//j is the division point of the array    
         }
@@ -47,9 +48,9 @@ int segment(int arr[], int a, int b)
 
 void qsort(int arr[], int a, int b)
 {
-	//implementing quicksort algorithm to sort user input, in case the user's naughty and inputs values in non-increasing order
+    //implementing quicksort algorithm to sort user input, in case the user's naughty and inputs values in non-increasing order
     int c;
-    if (a < b) 
+    if (a < b)
     {
         c = segment(arr, a, b);
         qsort(arr, a, c);
@@ -62,32 +63,32 @@ void qsort(int arr[], int a, int b)
 int active_id(int current_id, int number_of_players)
 {
     //first check next available id to be active, then return it
-    if (current_id < number_of_players-1) 
+    if (current_id < number_of_players)
     {
         return current_id + 1;
     }
-    else 
+    else
     {
-        return 0;
+        return 1;
     }
 
 }
 
+/*
 
-
-void fill_greens(Card deck[MAXDECKUPDATED], int number_of_greens, int green_value)
+void fill_greens(Deck* deck, int number_of_greens, int green_value)
 {
-	//fil a green_cards array in a Deck structure with values specified by the user 
+    //fil a green_cards array in a Deck structure with values specified by the user 
     for (int i = 0; i < number_of_greens; i++)
     {
-        deck[i].value = green_value;
+        deck.green_cards[i] = green_value;
         //strcpy(deck[i].color, COLORS[6]);
-    	
+
     }
 }
+*/
 
-
-
+/*
 void fill_deck(Deck* deck, int cauldrons, int card_values[MAXDECKSIZE])
 {
     int i = 0;
@@ -155,38 +156,39 @@ void fill_deck(Deck* deck, int cauldrons, int card_values[MAXDECKSIZE])
         break;
     }
 }
+*/
 
-
+/*
 void deal_cards(Game* game, int number_of_greens)
 //the function deals cards to players, starting from player 1 and with green cards
 {
     int number_of_cards = 0;
     int last_dealt = 0;
-	
-	for(int i = 0; i < MAXDECKSIZE; i++)
-	{
-		if(game->main_deck.blue_cards[i] != 0)
-		{
-            number_of_cards++;
-		}
-	}
 
-    
-    for (int j = 0; j < number_of_greens; j++) 
+    for (int i = 0; i < MAXDECKSIZE; i++)
     {
-        game->players[j % game->number_of_players].hand.green_cards[j/ game->number_of_players] = game->main_deck.green_cards[j];
+        if (game->main_deck.blue_cards[i] != 0)
+        {
+            number_of_cards++;
+        }
+    }
+
+
+    for (int j = 0; j < number_of_greens; j++)
+    {
+        game->players[j % game->number_of_players].hand.green_cards[j / game->number_of_players] = game->main_deck.green_cards[j];
         last_dealt = j % game->number_of_players;
     }
 
-    
-    
-    for (int j = 0 ; j < number_of_cards * game->number_of_cauldrons; j++) 
+
+
+    for (int j = 0; j < number_of_cards * game->number_of_cauldrons; j++)
     {
         last_dealt = active_id(last_dealt, game->number_of_players);
-        int color =  j / number_of_cards;
+        int color = j / number_of_cards;
         int position = 0;
         switch (color)
-    	{
+        {
         case 0:
             game->players[last_dealt].hand.blue_cards[(j % number_of_cards) / game->number_of_players] = game->main_deck.blue_cards[j % number_of_cards];
             break;
@@ -194,7 +196,7 @@ void deal_cards(Game* game, int number_of_greens)
             game->players[last_dealt].hand.red_cards[(j % number_of_cards) / game->number_of_players] = game->main_deck.red_cards[j % number_of_cards];
             break;
         case 2:
-            game->players[last_dealt].hand.violet_cards[(j % number_of_cards)  / game->number_of_players] = game->main_deck.violet_cards[j % number_of_cards];
+            game->players[last_dealt].hand.violet_cards[(j % number_of_cards) / game->number_of_players] = game->main_deck.violet_cards[j % number_of_cards];
             break;
         case 3:
             game->players[last_dealt].hand.yellow_cards[(j % number_of_cards) / game->number_of_players] = game->main_deck.yellow_cards[j % number_of_cards];
@@ -205,247 +207,201 @@ void deal_cards(Game* game, int number_of_greens)
         case 5:
             game->players[last_dealt].hand.black_cards[(j % number_of_cards) / game->number_of_players] = game->main_deck.black_cards[j % number_of_cards];
             break;
-        }     
+        }
     }
 }
-
+*/
+/*
 
 void print_deck(Game* game)
 //this function prints all cards from each player's hand and deck, starting with the former
 {
-	for(int i = 0; i < game->number_of_players; i++)
-	{
-        std::cout << i+1 << " player hand cards: "; //start printing hand cards
+    for (int i = 0; i < game->number_of_players; i++)
+    {
+        std::cout << i + 1 << " player hand cards: "; //start printing hand cards
         int j = 0;
-		
-		while (game->players[i].hand.green_cards[j] != 0)
-		{
+
+        while (game->players[i].hand.green_cards[j] != 0)
+        {
             std::cout << game->players[i].hand.green_cards[j] << " green ";
             j++;
-		}
-		
+        }
+
         j = 0;
 
-		while (game->players[i].hand.blue_cards[j] != 0)
+        while (game->players[i].hand.blue_cards[j] != 0)
         {
             std::cout << game->players[i].hand.blue_cards[j] << " blue ";
             j++;
         }
-		
-		j = 0;
-		
+
+        j = 0;
+
         while (game->players[i].hand.red_cards[j] != 0)
         {
             std::cout << game->players[i].hand.red_cards[j] << " red ";
             j++;
         }
-		
+
         j = 0;
-		
+
         while (game->players[i].hand.violet_cards[j] != 0)
         {
             std::cout << game->players[i].hand.violet_cards[j] << " violet ";
             j++;
         }
-		
+
         j = 0;
-		
+
         while (game->players[i].hand.yellow_cards[j] != 0)
         {
             std::cout << game->players[i].hand.yellow_cards[j] << " yellow ";
             j++;
         }
-		
+
         j = 0;
-		
+
         while (game->players[i].hand.white_cards[j] != 0)
         {
             std::cout << game->players[i].hand.white_cards[j] << " white ";
             j++;
         }
-		
+
         j = 0;
-		
+
         while (game->players[i].hand.black_cards[j] != 0)
         {
             std::cout << game->players[i].hand.black_cards[j] << " black ";
             j++;
         }
-		
-        std::cout << std::endl; // this marks the end of printing hand cards
-		
-        std::cout << i+1 << " player deck cards: "; //start printing deck cards
 
-		while (game->players[i].deck.green_cards[j] != 0)
+        std::cout << std::endl; // this marks the end of printing hand cards
+
+        std::cout << i + 1 << " player deck cards: "; //start printing deck cards
+
+        while (game->players[i].deck.green_cards[j] != 0)
         {
             std::cout << game->players[i].deck.green_cards[j] << " green ";
             j++;
         }
-		
+
         j = 0;
-		
+
         while (game->players[i].deck.blue_cards[j] != 0)
         {
             std::cout << game->players[i].deck.blue_cards[j] << " blue ";
             j++;
         }
-		
+
         j = 0;
-		
+
         while (game->players[i].deck.red_cards[j] != 0)
         {
             std::cout << game->players[i].deck.red_cards[j] << " red ";
             j++;
         }
-		
+
         j = 0;
-		
+
         while (game->players[i].deck.violet_cards[j] != 0)
         {
             std::cout << game->players[i].deck.violet_cards[j] << " violet ";
             j++;
         }
-		
+
         j = 0;
-		
+
         while (game->players[i].deck.yellow_cards[j] != 0)
         {
             std::cout << game->players[i].deck.yellow_cards[j] << " yellow ";
             j++;
         }
 
-		j = 0;
-		
+        j = 0;
+
         while (game->players[i].deck.white_cards[j] != 0)
         {
             std::cout << game->players[i].deck.white_cards[j] << " white ";
             j++;
         }
-		
+
         j = 0;
-		
+
         while (game->players[i].deck.black_cards[j] != 0)
         {
             std::cout << game->players[i].deck.black_cards[j] << " black ";
             j++;
         }
-		
+
         std::cout << std::endl;
-	}
+    }
 }
+*/
 
-void count_cards(Game* game)
+void XD(Game* game)
 {
-    int count_cards[MAXPLAYERS * 2] = {0};
-	for (int i =0; i < game->number_of_players; i++)
-	{
-        for(int j=0; j<MAXDECKSIZE; j++)
+    int count_cards[MAXPLAYERS * 2] = { 0 };
+    for (int i = 0; i < game->number_of_players; i++)
+    {
+        for (int j = 0; j < MAXDECKSIZE; j++)
         {
-	        if(game->players[i].hand.blue_cards[j]!=0)
-	        {
-                count_cards[2 * i]++;
-	        }
-            if (game->players[i].hand.red_cards[j] != 0)
+            if (game->players[i].hand.cards[j] != 0)
             {
                 count_cards[2 * i]++;
             }
-            if (game->players[i].hand.violet_cards[j] != 0)
-            {
-                count_cards[2 * i]++;
-            }
-            if (game->players[i].hand.yellow_cards[j] != 0)
-            {
-                count_cards[2 * i]++;
-            }
-            if (game->players[i].hand.white_cards[j] != 0)
-            {
-                count_cards[2 * i]++;
-            }
-            if (game->players[i].hand.black_cards[j] != 0)
-            {
-                count_cards[2 * i]++;
-            }
-            if (game->players[i].deck.blue_cards[j] != 0)
-            {
-                count_cards[(2 * i) +1]++;
-            }
-            if (game->players[i].deck.red_cards[j] != 0)
-            {
-                count_cards[(2 * i) + 1]++;
-            }
-            if (game->players[i].deck.violet_cards[j] != 0)
-            {
-                count_cards[(2 * i) + 1]++;
-            }
-            if (game->players[i].deck.yellow_cards[j] != 0)
-            {
-                count_cards[(2 * i) + 1]++;
-            }
-            if (game->players[i].deck.white_cards[j] != 0)
-            {
-                count_cards[(2 * i) + 1]++;
-            }
-            if (game->players[i].deck.black_cards[j] != 0)
-            {
-                count_cards[(2 * i) + 1]++;
-            }
-        	if (game->players[i].hand.green_cards[j] != 0)
-        	{
-                count_cards[2 * i]++;
-        	}
-        	if(game->players[i].deck.green_cards[j] !=0)
-        	{
-                count_cards[(2 * i) + 1]++;
-        	}
+           if (game->players[i].deck.cards[j] != 0) 
+           {
+               count_cards[(2 * i) + 1]++;
+           }
         }
-        std::cout << i+1 << " Player has " << count_cards[2 * i] << " cards in hand" << std::endl;
-        std::cout << i+1 << " Player has " << count_cards[(2 * i) + 1] << " cards in front of him" << std::endl;
-		
-	}
+        std::cout << i + 1 << " Player has " << count_cards[2 * i] << " cards in hand" << std::endl;
+        std::cout << i + 1 << " Player has " << count_cards[(2 * i) + 1] << " cards in front of him" << std::endl;
+
+    }
 }
 
-void green_check(char input[MAXINPUTSIZE], Game &game)
+void green_check(char input[MAXINPUTSIZE], Game& game)
 {
     int i = 0;
-	while(input[i])
-	{
-		if(input[i] == 'g')
+    while (input[i])
+    {
+        if (input[i] == 'g')
         {
-            if (game.value_of_greens == 0 && input[i-3] == 32) 
+            if (game.value_of_greens == 0 && input[i - 3] == 32)
             {
                 game.value_of_greens = input[i - 2] - 48;
             }
-            else if (game.value_of_greens == 0 && input[i-3] != 32)
+            else if (game.value_of_greens == 0 && input[i - 3] != 32)
             {
                 game.value_of_greens = ((input[i - 3] - 48) * 10) + (input[i - 2] - 48);
             }
-            else if (game.value_of_greens != input[i - 2] - 48 && input[i-3] == 32)
+            else if (game.value_of_greens != input[i - 2] - 48 && input[i - 3] == 32)
             {
                 game.value_of_greens = -1;
             }
-            else if (input[i-3] != 32 && game.value_of_greens != ((input[i - 3] - 48) * 10) + (input[i - 2] - 48))
+            else if (input[i - 3] != 32 && game.value_of_greens != ((input[i - 3] - 48) * 10) + (input[i - 2] - 48))
             {
                 game.value_of_greens = -1;
             }
-            
-			
-			game.number_of_greens++;
-            
-		}
+
+
+            game.number_of_greens++;
+
+        }
         i++;
-	}
+    }
 }
 /**/
 
 void print_cauldrons(Game* game)
 {
-	for(int i = 0; i < game->number_of_cauldrons; i++)
-	{
-        std::cout << i+1 << " pile cards: "<<std::endl;
-	}
+    for (int i = 0; i < game->number_of_cauldrons; i++)
+    {
+        std::cout << i + 1 << " pile cards: " << std::endl;
+    }
 }
 
-void count_cards(char input[MAXINPUTSIZE], Game& game, int cards[2 * MAXPLAYERS], int cauldrons[MAXCAULDRONS] = { 0 })
+void count_cards(char input[MAXINPUTSIZE], int number_cauldrons, int cards[2 * MAXPLAYERS], int cauldrons[MAXCAULDRONS] = { 0 })
 {
 
     int playerToken = 0;
@@ -453,7 +409,7 @@ void count_cards(char input[MAXINPUTSIZE], Game& game, int cards[2 * MAXPLAYERS]
     if (input[0] >= '0' && input[0] <= '9') //
     {
         // green_check(input, game); this is required for passing TASK 4a
-        if (input[3] == 'i') //pile card counting TASK 3b
+        if (input[4] == 'l') //pile card counting TASK 3b
         {
             int i = 1;
             while (input[i])
@@ -468,7 +424,7 @@ void count_cards(char input[MAXINPUTSIZE], Game& game, int cards[2 * MAXPLAYERS]
                 }
                 i++;
             }
-            cauldrons[game.number_of_cauldrons++] = cardcounter;
+            cauldrons[number_cauldrons++] = cardcounter;
         }
         else
         {
@@ -492,7 +448,7 @@ void count_cards(char input[MAXINPUTSIZE], Game& game, int cards[2 * MAXPLAYERS]
     }
 }
 
-void color_check(char input[MAXINPUTSIZE], int colorcheck[MAXCAULDRONS][MAXDECKSIZE], int j, int color )
+void color_check(char input[MAXINPUTSIZE], int colorcheck[MAXCAULDRONS][MAXDECKSIZE], int j, int color)
 {
     int unique = 0;
     for (int k = 0; k < MAXDECKSIZE; k++) {
@@ -512,25 +468,578 @@ void color_check(char input[MAXINPUTSIZE], int colorcheck[MAXCAULDRONS][MAXDECKS
     }
 
 }
+int card_check(int cards[MAXPLAYERS], int number_of_players, int active_player)
+{
+    int card_differential = 0;
+    for (int i = 1; i < number_of_players; i++)
+    {
+        if ((cards[i] > cards[0] && i > active_player) || (cards[0] - cards[i] > 2) || (cards[i] - cards[0] > 2))
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
 
+
+
+void color_count(int colorcounter[MAXCAULDRONS], int colorcheck[MAXCAULDRONS][MAXDECKSIZE], char input[MAXINPUTSIZE])
+{
+    int i = 1;
+    while (input[i])
+    {
+        if (input[i] == ':')
+        {
+            int j = i;
+            while (input[j])
+            {
+                if (input[j] == 'b' && input[j + 1] == 'l' && input[j + 2] == 'u')
+                {
+                    colorcounter[0]++;
+                    color_check(input, colorcheck, j, 0);
+
+
+                }
+                else if (input[j] == 'r' && input[j + 1] == 'e' && input[j + 2] == 'd')
+                {
+                    colorcounter[1]++;
+                    color_check(input, colorcheck, j, 1);
+                }
+                else if (input[j] == 'y' && input[j + 1] == 'e' && input[j + 2] == 'l')
+                {
+                    colorcounter[3]++;
+                    color_check(input, colorcheck, j, 3);
+
+                }
+                else if (input[j] == 'v' && input[j + 1] == 'i' && input[j + 2] == 'o')
+                {
+                    colorcounter[2]++;
+                    color_check(input, colorcheck, j, 2);
+                }
+                else if (input[j] == 'w' && input[j + 1] == 'h' && input[j + 2] == 'i')
+                {
+                    colorcounter[4]++;
+                    color_check(input, colorcheck, j, 4);
+                }
+                else if (input[j] == 'b' && input[j + 1] == 'l' && input[j + 2] == 'a')
+                {
+                    colorcounter[5]++;
+                    color_check(input, colorcheck, j, 5);
+                }
+                j++;
+            }
+        }
+        i++;
+    }
+
+}
+
+void cauldron_color_check(char input[MAXINPUTSIZE], int cauldron_colors[MAXCAULDRONS][CARDSINCAULDRON], int j, int i)
+{
+    if (input[j] == 'b' && input[j + 1] == 'l' && input[j + 2] == 'u')
+    {
+        cauldron_colors[input[0] - 49][i] = 1;
+    }
+    else if (input[j] == 'r' && input[j + 1] == 'e' && input[j + 2] == 'd')
+    {
+        cauldron_colors[input[0] - 49][i] = 2;
+    }
+    else if (input[j] == 'y' && input[j + 1] == 'e' && input[j + 2] == 'l')
+    {
+        cauldron_colors[input[0] - 49][i] = 3;
+
+    }
+    else if (input[j] == 'v' && input[j + 1] == 'i' && input[j + 2] == 'o')
+    {
+        cauldron_colors[input[0] - 49][i] = 4;
+    }
+    else if (input[j] == 'w' && input[j + 1] == 'h' && input[j + 2] == 'i')
+    {
+        cauldron_colors[input[0] - 49][i] = 5;
+    }
+    else if (input[j] == 'b' && input[j + 1] == 'l' && input[j + 2] == 'a')
+    {
+        cauldron_colors[input[0] - 49][i] = 6;
+    }
+}
+
+void player_cards_count(char input[MAXINPUTSIZE], Game* game)
+{
+    if (input[0] > '0' && input[0] <= '9')
+    {
+        int i = 1;
+        while (input[i])
+        {
+            if (input[i] > '0' && input[i] <= '9' && input[9] == 'h')
+            {
+                game->players[input[0] - 49].handcards++;
+                if (input[i + 1] != 32)
+                {
+                    i++;
+                }
+            }
+            if (input[i] > '0' && input[i] <= '9' && input[9] == 'd')
+            {
+                game->players[input[0] - 49].deckcards++;
+                if (input[i + 1] != 32)
+                {
+                    i++;
+                }
+            }
+            i++;
+        }
+    }
+}
+
+void players_read_cards(char input[MAXINPUTSIZE], Game* game, int j, int hand_or_deck)
+{
+    int last_hand_index = 0;
+    int last_deck_index = 0;
+    while (input[j])
+    {
+        if (hand_or_deck == 0)
+        {
+            if (input[j] == 'b' && input[j + 1] == 'l' && input[j + 2] == 'u')
+            {
+                game->players[input[0] - 49].hand.colors[last_hand_index] = 1;
+                if (input[j - 3] == 32)
+                {
+                    game->players[input[0] - 49].hand.cards[last_hand_index++] = input[j - 2] - 48;
+                }
+                else
+                {
+                    game->players[input[0] - 49].hand.cards[last_hand_index++] = (input[j - 3] - 48)*10 + input[j-2] - 48;
+                }
+            }
+            else if (input[j] == 'r' && input[j + 1] == 'e' && input[j + 2] == 'd')
+            {
+                game->players[input[0] - 49].hand.colors[last_hand_index] = 2;
+                if (input[j - 3] == 32)
+                {
+                    game->players[input[0] - 49].hand.cards[last_hand_index++] = input[j - 2] - 48;
+                }
+                else
+                {
+                    game->players[input[0] - 49].hand.cards[last_hand_index++] = (input[j - 3] - 48) * 10 + input[j - 2] - 48;
+                }
+            }
+            else if (input[j] == 'y' && input[j + 1] == 'e' && input[j + 2] == 'l')
+            {
+                game->players[input[0] - 49].hand.colors[last_hand_index] = 4;
+                if (input[j - 3] == 32)
+                {
+                    game->players[input[0] - 49].hand.cards[last_hand_index++] = input[j - 2] - 48;
+                }
+                else
+                {
+                    game->players[input[0] - 49].hand.cards[last_hand_index++] = (input[j - 3] - 48) * 10 + input[j - 2] - 48;
+                }
+            }
+            else if (input[j] == 'v' && input[j + 1] == 'i' && input[j + 2] == 'o')
+            {
+                game->players[input[0] - 49].hand.colors[last_hand_index] = 3;
+                if (input[j - 3] == 32)
+                {
+                    game->players[input[0] - 49].hand.cards[last_hand_index++] = input[j - 2] - 48;
+                }
+                else
+                {
+                    game->players[input[0] - 49].hand.cards[last_hand_index++] = (input[j - 3] - 48) * 10 + input[j - 2] - 48;
+                }
+            }
+            else if (input[j] == 'w' && input[j + 1] == 'h' && input[j + 2] == 'i')
+            {
+                game->players[input[0] - 49].hand.colors[last_hand_index] = 5;
+                if (input[j - 3] == 32)
+                {
+                    game->players[input[0] - 49].hand.cards[last_hand_index++] = input[j - 2] - 48;
+                }
+                else
+                {
+                    game->players[input[0] - 49].hand.cards[last_hand_index++] = (input[j - 3] - 48) * 10 + input[j - 2] - 48;
+                }
+            }
+            else if (input[j] == 'b' && input[j + 1] == 'l' && input[j + 2] == 'a')
+            {
+                game->players[input[0] - 49].hand.colors[last_hand_index] = 6;
+                if (input[j - 3] == 32)
+                {
+                    game->players[input[0] - 49].hand.cards[last_hand_index++] = input[j - 2] - 48;
+                }
+                else
+                {
+                    game->players[input[0] - 49].hand.cards[last_hand_index++] = (input[j - 3] - 48) * 10 + input[j - 2] - 48;
+                }
+            }
+            else if (input[j] == 'g' && input[j + 1] == 'r' && input[j + 2] == 'e')
+            {
+                if (input[j - 3] == 32)
+                {
+                    game->players[input[0] - 49].hand.cards[last_hand_index++] = input[j - 2] - 48;
+                }
+                else
+                {
+                    game->players[input[0] - 49].hand.cards[last_hand_index++] = (input[j - 3] - 48) * 10 + input[j - 2] - 48;
+                }
+            }
+            
+        }
+        else if (hand_or_deck == 1)
+        {
+            if (input[j] == 'b' && input[j + 1] == 'l' && input[j + 2] == 'u')
+            {
+                game->players[input[0] - 49].deck.colors[last_deck_index] = 1;
+                if (input[j - 3] == 32)
+                {
+                    game->players[input[0] - 49].deck.cards[last_deck_index++] = input[j - 2] - 48;
+                }
+                else
+                {
+                    game->players[input[0] - 49].deck.cards[last_deck_index++] = (input[j - 3] - 48) * 10 + input[j - 2] - 48;
+                }
+            }
+            else if (input[j] == 'r' && input[j + 1] == 'e' && input[j + 2] == 'd')
+            {
+                game->players[input[0] - 49].deck.colors[last_deck_index] = 2;
+                if (input[j - 3] == 32)
+                {
+                    game->players[input[0] - 49].deck.cards[last_deck_index++] = input[j - 2] - 48;
+                }
+                else
+                {
+                    game->players[input[0] - 49].deck.cards[last_deck_index++] = (input[j - 3] - 48) * 10 + input[j - 2] - 48;
+                }
+            }
+            else if (input[j] == 'y' && input[j + 1] == 'e' && input[j + 2] == 'l')
+            {
+                game->players[input[0] - 49].deck.colors[last_deck_index] = 4;
+                if (input[j - 3] == 32)
+                {
+                    game->players[input[0] - 49].deck.cards[last_deck_index++] = input[j - 2] - 48;
+                }
+                else
+                {
+                    game->players[input[0] - 49].deck.cards[last_deck_index++] = (input[j - 3] - 48) * 10 + input[j - 2] - 48;
+                }
+            }
+            else if (input[j] == 'v' && input[j + 1] == 'i' && input[j + 2] == 'o')
+            {
+                game->players[input[0] - 49].deck.colors[last_deck_index] = 3;
+                if (input[j - 3] == 32)
+                {
+                    game->players[input[0] - 49].deck.cards[last_deck_index++] = input[j - 2] - 48;
+                }
+                else
+                {
+                    game->players[input[0] - 49].deck.cards[last_deck_index++] = (input[j - 3] - 48) * 10 + input[j - 2] - 48;
+                }
+            }
+            else if (input[j] == 'w' && input[j + 1] == 'h' && input[j + 2] == 'i')
+            {
+                game->players[input[0] - 49].deck.colors[last_deck_index] = 5;
+                if (input[j - 3] == 32)
+                {
+                    game->players[input[0] - 49].deck.cards[last_deck_index++] = input[j - 2] - 48;
+                }
+                else
+                {
+                    game->players[input[0] - 49].deck.cards[last_deck_index++] = (input[j - 3] - 48) * 10 + input[j - 2] - 48;
+                }
+            }
+            else if (input[j] == 'b' && input[j + 1] == 'l' && input[j + 2] == 'a')
+            {
+                game->players[input[0] - 49].deck.colors[last_deck_index] = 6;
+                if (input[j - 3] == 32)
+                {
+                    game->players[input[0] - 49].deck.cards[last_deck_index++] = input[j - 2] - 48;
+                }
+                else
+                {
+                    game->players[input[0] - 49].deck.cards[last_deck_index++] = (input[j - 3] - 48) * 10 + input[j - 2] - 48;
+                }
+            }
+            else if (input[j] == 'g' && input[j + 1] == 'r' && input[j + 2] == 'e')
+            {
+                if (input[j - 3] == 32)
+                {
+                    game->players[input[0] - 49].deck.cards[last_deck_index++] = input[j - 2] - 48;
+                }
+                else
+                {
+                    game->players[input[0] - 49].deck.cards[last_deck_index++] = (input[j - 3] - 48) * 10 + input[j - 2] - 48;
+                }
+            }
+        }
+        j++;
+    }
+
+}
+
+void cauldron_read_cards(char input[MAXINPUTSIZE], Game* game)
+{
+    int last_cauldron_index = 0;
+    int j = 1;
+    while (input[j])
+    {
+        if (input[j] == 'b' && input[j + 1] == 'l' && input[j + 2] == 'u')
+        {
+            game->cauldrons[input[0] - 49].colors[last_cauldron_index] = 1;
+            if (input[j - 3] == 32)
+            {
+                game->cauldrons[input[0] - 49].cards[last_cauldron_index++] = input[j - 2] - 48;
+            }
+            else
+            {
+                game->cauldrons[input[0] - 49].cards[last_cauldron_index++] = (input[j - 3] - 48) * 10 + input[j - 2] - 48;
+            }
+        
+        }
+        else if (input[j] == 'r' && input[j + 1] == 'e' && input[j + 2] == 'd')
+        {
+            game->cauldrons[input[0] - 49].colors[last_cauldron_index] = 2;
+            if (input[j - 3] == 32)
+            {
+                game->cauldrons[input[0] - 49].cards[last_cauldron_index++] = input[j - 2] - 48;
+            }
+            else
+            {
+                game->cauldrons[input[0] - 49].cards[last_cauldron_index++] = (input[j - 3] - 48) * 10 + input[j - 2] - 48;
+            }
+        }
+        else if (input[j] == 'y' && input[j + 1] == 'e' && input[j + 2] == 'l')
+        {
+            game->cauldrons[input[0] - 49].colors[last_cauldron_index] = 4;
+            if (input[j - 3] == 32)
+            {
+                game->cauldrons[input[0] - 49].cards[last_cauldron_index++] = input[j - 2] - 48;
+            }
+            else
+            {
+                game->cauldrons[input[0] - 49].cards[last_cauldron_index++] = (input[j - 3] - 48) * 10 + input[j - 2] - 48;
+            }
+        }
+        else if (input[j] == 'v' && input[j + 1] == 'i' && input[j + 2] == 'o')
+        {
+            game->cauldrons[input[0] - 49].colors[last_cauldron_index] = 3;
+            if (input[j - 3] == 32)
+            {
+                game->cauldrons[input[0] - 49].cards[last_cauldron_index++] = input[j - 2] - 48;
+            }
+            else
+            {
+                game->cauldrons[input[0] - 49].cards[last_cauldron_index++] = (input[j - 3] - 48) * 10 + input[j - 2] - 48;
+            }
+        }
+        else if (input[j] == 'w' && input[j + 1] == 'h' && input[j + 2] == 'i')
+        {
+            game->cauldrons[input[0] - 49].colors[last_cauldron_index] = 5;
+            if (input[j - 3] == 32)
+            {
+                game->cauldrons[input[0] - 49].cards[last_cauldron_index++] = input[j - 2] - 48;
+            }
+            else
+            {
+                game->cauldrons[input[0] - 49].cards[last_cauldron_index++] = (input[j - 3] - 48) * 10 + input[j - 2] - 48;
+            }
+        }
+        else if (input[j] == 'b' && input[j + 1] == 'l' && input[j + 2] == 'a')
+        {
+            game->cauldrons[input[0] - 49].colors[last_cauldron_index] = 6;
+            if (input[j - 3] == 32)
+            {
+                game->cauldrons[input[0] - 49].cards[last_cauldron_index++] = input[j - 2] - 48;
+            }
+            else
+            {
+                game->cauldrons[input[0] - 49].cards[last_cauldron_index++] = (input[j - 3] - 48) * 10 + input[j - 2] - 48;
+            }
+        }
+        else if (input[j] == 'g' && input[j + 1] == 'r' && input[j + 2] == 'e')
+        {
+            game->cauldrons[input[0] - 49].colors[last_cauldron_index] = 0;
+            if (input[j - 3] == 32)
+            {
+                game->cauldrons[input[0] - 49].cards[last_cauldron_index++] = input[j - 2] - 48;
+            }
+            else
+            {
+                game->cauldrons[input[0] - 49].cards[last_cauldron_index++] = (input[j - 3] - 48) * 10 + input[j - 2] - 48;
+            }
+        }
+        j++;
+    }
+}
+
+void simple_move(Game* game, int cauldron_values[MAXCAULDRONS])
+{
+    int j = 0;
+    int first_free_index = 0;
+    int first_free_color = 0;
+    int cauldron_colors[MAXCAULDRONS] = { 0 };
+    int cauldron_index = 0;
+    int card_value = 0;
+    while (j < MAXDECKSIZE) 
+    {
+        if (game->players[game->active_index-1].hand.cards[j] != 0)
+        {
+            first_free_index = j;
+            first_free_color = game->players[game->active_index-1].hand.colors[j];
+            card_value = game->players[game->active_index - 1].hand.cards[first_free_index];
+            break;
+        }
+        j++;
+    }
+
+    j = 0;
+    int i = 0;
+    while (j < game->number_of_cauldrons)
+    {
+        i = 0;
+        while (i < MAXDECKUPDATED )
+        {
+            if (game->cauldrons[j].colors[i] != 0) 
+            {
+                cauldron_colors[j] = game->cauldrons[j].colors[i];
+            }
+            i++;
+        }
+        
+        j++;
+    }
+    i = 0;
+    j = 0;
+    while (j < MAXCAULDRONS)
+    {
+        if (first_free_color == 0 && cauldron_values[j] + game->players[game->active_index-1].hand.cards[first_free_index] < game->explosion_threshold)
+        {
+            
+            while (i < MAXDECKUPDATED)
+            {
+                if (game->cauldrons[j].cards[i] == 0)
+                {
+                    game->cauldrons[j].cards[i] = card_value;
+                    game->cauldrons[j].colors[i] = first_free_color;
+                    game->players[game->active_index-1].hand.cards[first_free_index] = 0;
+                    game->players[game->active_index-1].hand.colors[first_free_index] = 0;
+                    game->players[game->active_index - 1].handcards--;
+                    return;
+                }
+                i++;
+            }
+        }
+        else if (first_free_color == cauldron_colors[j])
+        {
+            while (i < MAXDECKUPDATED)
+            {
+                if (game->cauldrons[j].cards[i] == 0)
+                {
+                    game->cauldrons[j].cards[i] = card_value;
+                    game->cauldrons[j].colors[i] = first_free_color;
+                    game->players[game->active_index - 1].hand.cards[first_free_index] = 0;
+                    game->players[game->active_index - 1].hand.colors[first_free_index] = 0;
+                    game->players[game->active_index - 1].handcards--;
+                    return;
+                }
+                i++;
+            }
+        }
+        j++;
+    }
+}
+
+void print_gamestate(Game* game)
+{
+    std::cout << "active player = " << game->active_index << std::endl;
+    std::cout << "players number = " << game->number_of_players << std::endl;
+    std::cout << "explosion threshold = " << game->explosion_threshold << std::endl;
+    for (int i = 0; i < game->number_of_players; i++)
+    {
+        std::cout << i + 1 << " player hand cards:";
+        for (int j = 0; j < MAXDECKUPDATED; j++)
+        {
+            if (game->players[i].hand.cards[j] != 0)
+            {
+                std::cout <<" "<< game->players[i].hand.cards[j] << " " << COLORS[game->players[i].hand.colors[j]];
+            }
+            
+        }
+        std::cout << std::endl;
+        std::cout << i + 1 << " player deck cards:";
+        for (int j = 0; j < MAXDECKUPDATED; j++)
+        {
+            if (game->players[i].deck.cards[j] != 0)
+            {
+                std::cout << " " << game->players[i].deck.cards[j] << " " << COLORS[game->players[i].deck.colors[j]] << " ";
+            }
+            
+        }
+        std::cout << std::endl;
+    }
+    for (int i = 0; i < game->number_of_cauldrons; i++)
+    {
+        std::cout << i + 1 << " pile cards:";
+        for (int j = 0; j < MAXDECKSIZE; j++)
+        {
+            if (game->cauldrons[i].cards[j] != 0)
+            {
+                std::cout << " " << game->cauldrons[i].cards[j] << " " << COLORS[game->cauldrons[i].colors[j]];
+
+            }
+        }
+        std::cout << std::endl;
+    }
+
+    std::cout << std::endl;
+
+    
+}
+
+
+void cauldron_explosion(Game* game)
+{
+    for (int i = 0; i < MAXCAULDRONS; i++) 
+    {
+        int cauldron_sum = 0;
+        for (int j = 0; j < MAXDECKUPDATED; j++)
+        {
+            if (game->cauldrons[i].cards[j] != 0)
+            {
+                cauldron_sum += game->cauldrons[i].cards[j];
+            }
+        }
+        if (cauldron_sum > game->explosion_threshold)
+        {
+            int j = 0;
+            while (game->cauldrons[i].cards[j] != 0)
+            {
+                if (game->active_index > 1)
+                { 
+                    game->players[game->active_index - 2].deck.cards[game->players[game->active_index - 2].deckcards + j] = game->cauldrons[i].cards[j];
+                    game->players[game->active_index - 2].deck.colors[game->players[game->active_index - 2].deckcards + j] = game->cauldrons[i].colors[j];
+                    game->cauldrons[i].cards[j] = 0;
+                    game->cauldrons[i].colors[j] = 0;
+                    j++;
+                }
+                else if (game->active_index == 1)
+                {
+                    game->players[game->number_of_players-1].deck.cards[game->players[game->number_of_players - 1].deckcards + j] = game->cauldrons[i].cards[j];
+                    game->players[game->number_of_players-1].deck.colors[game->players[game->number_of_players - 1].deckcards + j] = game->cauldrons[i].colors[j];
+                    game->cauldrons[i].cards[j] = 0;
+                    game->cauldrons[i].colors[j] = 0;
+                    j++;
+                }
+            }
+            return;
+        }
+    }
+}
 
 
 
 int main()
 {
-    int active = 1;
+
     Game game;
-    //Card main_deck[MAXDECKUPDATED];
-    //game.number_of_greens = 4;
-    //game.value_of_greens = 4;
-    //fill_greens(main_deck, game.number_of_greens, game.value_of_greens);
-
-
-
-
-   // std::cout << main_deck[0].value;
-
-
 
     /*
     THIS IS NEEDED FOR TASKS 1/2
@@ -569,20 +1078,19 @@ int main()
     qsort(card_values, 0, number_of_cards - 1);
 
 
-
-
-
-
     fill_greens(&game.main_deck, number_of_greens, value_of_greens);
     fill_deck(&game.main_deck, game.number_of_cauldrons, card_values);
     deal_cards(&game, number_of_greens);
 
     */
     int cauldrons[MAXCAULDRONS] = { 0 };
+    int cauldrons_values[MAXCAULDRONS] = { 0 };
+    int cauldrons_colors[MAXCAULDRONS][CARDSINCAULDRON] = { 0 };
     char input[MAXINPUTSIZE];
     int cards[2 * MAXPLAYERS] = { 0 };
     int colorcounter[MAXCAULDRONS] = { 0 };
     int colorcheck[MAXCAULDRONS][MAXDECKSIZE] = { 0 };
+    int playercards[MAXPLAYERS] = { 0 };
 
     while (fgets(input, MAXINPUTSIZE, stdin))
     {
@@ -590,70 +1098,77 @@ int main()
         {
             break; //end loop if you encounter end of line symbol as the first letter of a line
         }
+        if (input[0] == 'a')
+        {
+            game.active_index = input[16] - 48;
+        }
         if (input[0] == 'p')
         {
             game.number_of_players = input[17] - 48; //get amount of players from user input/save file
         }
         if (input[0] == 'e')
         {
-            game.explosion_threshold = (input[22] - 48) * 10 + (input[23] - 48);
+            if (input[24] -48 >= 0 && input[24]- 48 <=9)
+            {
+                game.explosion_threshold = (input[22] - 48) * 100 + (input[23] - 48) * 10 + input[24] - 48;
+                
+                
+            }
+            else
+            {
+                game.explosion_threshold = (input[22] - 48) * 10 + (input[23] - 48);
+                
+            }
         }
 
-        count_cards(input, game, cards, cauldrons);
+        count_cards(input, game.number_of_cauldrons, cards, cauldrons);
+        color_count(colorcounter, colorcheck, input);
+        player_cards_count(input, &game);
 
 
-        int i = 1;
-        while (input[i])
+        if (input[9] == 'h')
         {
-            if (input[i] == ':')
-            {
-                int j = i;
-                while (input[j])
+            players_read_cards(input, &game, 1, 0);
+        }
+        else if (input[9] == 'd')
+        {
+            players_read_cards(input, &game, 1, 1);
+        }
+     
+
+        if (input[4] == 'l')
+        {
+            cauldron_read_cards(input, &game);
+            game.number_of_cauldrons++;
+            int i = 1;
+            int j = 0;
+            while (input[i]) {
+
+                if (input[i] > '0' && input[i] <= '9')
                 {
-                    if (input[j] == 'b' && input[j + 1] == 'l' && input[j + 2] == 'u')
+                    int a = input[i] - 48;
+                    if (input[i + 1] == 32) {
+
+                        cauldrons_values[input[0] - 49] += (input[i] - 48);
+                        cauldron_color_check(input, cauldrons_colors, i + 2, j++);
+                    }
+                    else
                     {
-                        colorcounter[0]++;
-                        color_check(input, colorcheck, j, 0);
+                        cauldrons_values[input[0] - 49] += (input[i] - 48) * 10 + (input[i + 1] - 48);
+                        cauldron_color_check(input, cauldrons_colors, i + 3, j++);
+                        i++;
+                    }
 
 
-                    }
-                    else if (input[j] == 'r' && input[j + 1] == 'e' && input[j + 2] == 'd')
-                    {
-                        colorcounter[1]++;
-                        color_check(input, colorcheck, j, 1);
-                    }
-                    else if (input[j] == 'y' && input[j + 1] == 'e' && input[j + 2] == 'l')
-                    {
-                        colorcounter[3]++;
-                        color_check(input, colorcheck, j, 3);
-
-                    }
-                    else if (input[j] == 'v' && input[j + 1] == 'i' && input[j + 2] == 'o')
-                    {
-                        colorcounter[2]++;
-                        color_check(input, colorcheck, j, 2);
-                    }
-                    else if (input[j] == 'w' && input[j + 1] == 'h' && input[j + 2] == 'i')
-                    {
-                        colorcounter[4]++;
-                        color_check(input, colorcheck, j, 4);
-                    }
-                    else if (input[j] == 'b' && input[j + 1] == 'l' && input[j + 2] == 'a')
-                    {
-                        colorcounter[5]++;
-                        color_check(input, colorcheck, j, 5);
-                    }
-                    j++;
                 }
 
+
+
+
+
+                i++;
             }
-            i++;
-
         }
-
-
-
-
 
 
 
@@ -669,6 +1184,58 @@ int main()
         }
     }
     */
+    /*
+    for (int i = 0; i < game.number_of_players; i++)
+    {
+        playercards[i] = game.players[i].handcards;
+    }
+    int gamestate = 0;
+    int card_differential = card_check(playercards, game.number_of_players, game.active_index);
+    if (card_differential != 0)
+    {
+        std::cout << "The number of players cards on hand is wrong" << std::endl;
+        gamestate++;
+    }
+
+    
+    GAMESTATE CHECKING FOR TASK 6
+    for (int i = 0; i < MAXCAULDRONS; i++)
+    {
+        for (int j = 1; j < CARDSINCAULDRON; j++)
+        {
+            if (cauldrons_colors[i][0] != cauldrons_colors[i][j] && cauldrons_colors[i][j] != 0)
+            {
+                std::cout << "Two different colors were found on the " << i + 1 << " pile " << std::endl;
+                gamestate++;
+                break;
+            }
+        }
+    }
+
+
+    for (int i = 0; i < MAXCAULDRONS; i++)
+    {
+        if (cauldrons_values[i] >= game.explosion_threshold)
+        {
+            std::cout << "Pile number " << i + 1 << " should explode earlier" << std::endl;
+            gamestate++;
+        }
+    }
+    if (gamestate == 0)
+    {
+
+        std::cout << "Current state of the game is ok " << std::endl;
+    }
+    */
+    simple_move(&game, cauldrons_values);
+    game.active_index=active_id(game.active_index, game.number_of_players);
+    cauldron_explosion(&game);
+    print_gamestate(&game);
+
+
+
+    /*
+    THIS IS REQUIRED FOR TASK 5
     for (int i = 0; i < MAXCAULDRONS; i++)
     {
         qsort(colorcheck[i], 0, MAXDECKSIZE - 1);
@@ -687,14 +1254,14 @@ int main()
 
     if (cardsdifferent == 0) {
         std::cout << "The values of cards of all colors are identical:" << std::endl;
-        for (int i = 0; i < MAXDECKSIZE; i++) 
+        for (int i = 0; i < MAXDECKSIZE; i++)
         {
             if (colorcheck[0][i] != 0) {
                 std::cout << colorcheck[0][i] << " ";
             }
         }
     }
-    else 
+    else
     {
         std::cout << "The values of cards of all colors are not identical:" << std::endl;
         for (int i = 0; i < game.number_of_cauldrons; i++)
@@ -710,6 +1277,8 @@ int main()
             std::cout<<std::endl;
         }
     }
+
+    */
 
     /*
     SOLUTION TO TASK 4A
@@ -730,24 +1299,24 @@ int main()
         }
     }
     */
-	
+
     /*
      SOLUTION TO TASK 3 ON STOS
-	for (int i = 0; i < game.number_of_players ;i++)
-	{
+    for (int i = 0; i < game.number_of_players ;i++)
+    {
         std::cout << i + 1 << " player has " << cards[2 * i] << " cards on hand" << std::endl;
         std::cout << i + 1 << " player has " << cards[(2 * i) + 1] << " cards in front of him" << std::endl;
-	}
+    }
 
     for (int i=0; i<game.number_of_cauldrons; i++)
     {
         std::cout << "there are " << cauldrons[i] << " cards on " << i + 1 << " pile " << std::endl;
     }
-    
-	*/
 
-	/*
-	 THIS IS REQUIRED TO PASS TASK 4A
+    */
+
+    /*
+     THIS IS REQUIRED TO PASS TASK 4A
     if(game.value_of_greens == -1)
     {
         std::cout << "Different green cards values occurred";
@@ -760,12 +1329,12 @@ int main()
     {
         std::cout << "Found " << game.number_of_greens << " green cards, all with " << game.value_of_greens << " value";
     }
-	*/
+    */
     /* SOLUTION TO TASKS 1/2 ON STOS
     print_deck(&game);
     print_cauldrons(&game);
     count_cards(&game);
     */
-	
+
     return 0;
 }
