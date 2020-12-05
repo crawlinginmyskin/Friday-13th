@@ -1,10 +1,8 @@
 ﻿#include <iostream>
-#include "Cauldron.cpp"
 #include "Deck.cpp"
 #include "Player.cpp"
 #include "Game.cpp"
 #include <string.h>
-//#include <cassert>
 
 
 
@@ -59,6 +57,22 @@ void qsort(int arr[], int a, int b)
 }
 
 
+void deal_cards(Game* game)
+{
+    for (int i = 0; i < game->number_of_cauldrons * game->number_of_cards + game->number_of_greens; i++)
+    {
+        if (game->main_deck.cards[i] != 0)
+        {
+
+
+            game->players[i % game->number_of_players].hand.cards[i / game->number_of_players] = game->main_deck.cards[i];
+            game->players[i % game->number_of_players].hand.colors[i / game->number_of_players] = game->main_deck.colors[i];
+            game->players[i % game->number_of_players].handcards++;
+        }
+    }
+}
+
+
 
 int active_id(int current_id, int number_of_players)
 {
@@ -74,291 +88,6 @@ int active_id(int current_id, int number_of_players)
 
 }
 
-/*
-
-void fill_greens(Deck* deck, int number_of_greens, int green_value)
-{
-    //fil a green_cards array in a Deck structure with values specified by the user 
-    for (int i = 0; i < number_of_greens; i++)
-    {
-        deck.green_cards[i] = green_value;
-        //strcpy(deck[i].color, COLORS[6]);
-
-    }
-}
-*/
-
-/*
-void fill_deck(Deck* deck, int cauldrons, int card_values[MAXDECKSIZE])
-{
-    int i = 0;
-
-    switch (cauldrons)
-    {
-    case 1:
-        while (card_values[i] != 0)
-        {
-            deck->blue_cards[i] = card_values[i];
-            i++;
-        }
-        break;
-    case 2:
-        while (card_values[i] != 0)
-        {
-            deck->blue_cards[i] = card_values[i];
-            deck->red_cards[i] = card_values[i];
-            i++;
-        }
-        break;
-    case 3:
-        while (card_values[i] != 0)
-        {
-            deck->blue_cards[i] = card_values[i];
-            deck->red_cards[i] = card_values[i];
-            deck->violet_cards[i] = card_values[i];
-            i++;
-        }
-        break;
-    case 4:
-        while (card_values[i] != 0)
-        {
-            deck->blue_cards[i] = card_values[i];
-            deck->red_cards[i] = card_values[i];
-            deck->violet_cards[i] = card_values[i];
-            deck->yellow_cards[i] = card_values[i];
-            i++;
-        }
-        break;
-
-    case 5:
-        while (card_values[i] != 0)
-        {
-            deck->blue_cards[i] = card_values[i];
-            deck->red_cards[i] = card_values[i];
-            deck->violet_cards[i] = card_values[i];
-            deck->yellow_cards[i] = card_values[i];
-            deck->white_cards[i] = card_values[i];
-            i++;
-        }
-        break;
-    case 6:
-        while (card_values[i] != 0)
-        {
-
-            deck->blue_cards[i] = card_values[i];
-            deck->red_cards[i] = card_values[i];
-            deck->violet_cards[i] = card_values[i];
-            deck->yellow_cards[i] = card_values[i];
-            deck->white_cards[i] = card_values[i];
-            deck->black_cards[i] = card_values[i];
-            i++;
-        }
-        break;
-    }
-}
-*/
-
-/*
-void deal_cards(Game* game, int number_of_greens)
-//the function deals cards to players, starting from player 1 and with green cards
-{
-    int number_of_cards = 0;
-    int last_dealt = 0;
-
-    for (int i = 0; i < MAXDECKSIZE; i++)
-    {
-        if (game->main_deck.blue_cards[i] != 0)
-        {
-            number_of_cards++;
-        }
-    }
-
-
-    for (int j = 0; j < number_of_greens; j++)
-    {
-        game->players[j % game->number_of_players].hand.green_cards[j / game->number_of_players] = game->main_deck.green_cards[j];
-        last_dealt = j % game->number_of_players;
-    }
-
-
-
-    for (int j = 0; j < number_of_cards * game->number_of_cauldrons; j++)
-    {
-        last_dealt = active_id(last_dealt, game->number_of_players);
-        int color = j / number_of_cards;
-        int position = 0;
-        switch (color)
-        {
-        case 0:
-            game->players[last_dealt].hand.blue_cards[(j % number_of_cards) / game->number_of_players] = game->main_deck.blue_cards[j % number_of_cards];
-            break;
-        case 1:
-            game->players[last_dealt].hand.red_cards[(j % number_of_cards) / game->number_of_players] = game->main_deck.red_cards[j % number_of_cards];
-            break;
-        case 2:
-            game->players[last_dealt].hand.violet_cards[(j % number_of_cards) / game->number_of_players] = game->main_deck.violet_cards[j % number_of_cards];
-            break;
-        case 3:
-            game->players[last_dealt].hand.yellow_cards[(j % number_of_cards) / game->number_of_players] = game->main_deck.yellow_cards[j % number_of_cards];
-            break;
-        case 4:
-            game->players[last_dealt].hand.white_cards[(j % number_of_cards) / game->number_of_players] = game->main_deck.white_cards[j % number_of_cards];
-            break;
-        case 5:
-            game->players[last_dealt].hand.black_cards[(j % number_of_cards) / game->number_of_players] = game->main_deck.black_cards[j % number_of_cards];
-            break;
-        }
-    }
-}
-*/
-/*
-
-void print_deck(Game* game)
-//this function prints all cards from each player's hand and deck, starting with the former
-{
-    for (int i = 0; i < game->number_of_players; i++)
-    {
-        std::cout << i + 1 << " player hand cards: "; //start printing hand cards
-        int j = 0;
-
-        while (game->players[i].hand.green_cards[j] != 0)
-        {
-            std::cout << game->players[i].hand.green_cards[j] << " green ";
-            j++;
-        }
-
-        j = 0;
-
-        while (game->players[i].hand.blue_cards[j] != 0)
-        {
-            std::cout << game->players[i].hand.blue_cards[j] << " blue ";
-            j++;
-        }
-
-        j = 0;
-
-        while (game->players[i].hand.red_cards[j] != 0)
-        {
-            std::cout << game->players[i].hand.red_cards[j] << " red ";
-            j++;
-        }
-
-        j = 0;
-
-        while (game->players[i].hand.violet_cards[j] != 0)
-        {
-            std::cout << game->players[i].hand.violet_cards[j] << " violet ";
-            j++;
-        }
-
-        j = 0;
-
-        while (game->players[i].hand.yellow_cards[j] != 0)
-        {
-            std::cout << game->players[i].hand.yellow_cards[j] << " yellow ";
-            j++;
-        }
-
-        j = 0;
-
-        while (game->players[i].hand.white_cards[j] != 0)
-        {
-            std::cout << game->players[i].hand.white_cards[j] << " white ";
-            j++;
-        }
-
-        j = 0;
-
-        while (game->players[i].hand.black_cards[j] != 0)
-        {
-            std::cout << game->players[i].hand.black_cards[j] << " black ";
-            j++;
-        }
-
-        std::cout << std::endl; // this marks the end of printing hand cards
-
-        std::cout << i + 1 << " player deck cards: "; //start printing deck cards
-
-        while (game->players[i].deck.green_cards[j] != 0)
-        {
-            std::cout << game->players[i].deck.green_cards[j] << " green ";
-            j++;
-        }
-
-        j = 0;
-
-        while (game->players[i].deck.blue_cards[j] != 0)
-        {
-            std::cout << game->players[i].deck.blue_cards[j] << " blue ";
-            j++;
-        }
-
-        j = 0;
-
-        while (game->players[i].deck.red_cards[j] != 0)
-        {
-            std::cout << game->players[i].deck.red_cards[j] << " red ";
-            j++;
-        }
-
-        j = 0;
-
-        while (game->players[i].deck.violet_cards[j] != 0)
-        {
-            std::cout << game->players[i].deck.violet_cards[j] << " violet ";
-            j++;
-        }
-
-        j = 0;
-
-        while (game->players[i].deck.yellow_cards[j] != 0)
-        {
-            std::cout << game->players[i].deck.yellow_cards[j] << " yellow ";
-            j++;
-        }
-
-        j = 0;
-
-        while (game->players[i].deck.white_cards[j] != 0)
-        {
-            std::cout << game->players[i].deck.white_cards[j] << " white ";
-            j++;
-        }
-
-        j = 0;
-
-        while (game->players[i].deck.black_cards[j] != 0)
-        {
-            std::cout << game->players[i].deck.black_cards[j] << " black ";
-            j++;
-        }
-
-        std::cout << std::endl;
-    }
-}
-*/
-
-void XD(Game* game)
-{
-    int count_cards[MAXPLAYERS * 2] = { 0 };
-    for (int i = 0; i < game->number_of_players; i++)
-    {
-        for (int j = 0; j < MAXDECKSIZE; j++)
-        {
-            if (game->players[i].hand.cards[j] != 0)
-            {
-                count_cards[2 * i]++;
-            }
-           if (game->players[i].deck.cards[j] != 0) 
-           {
-               count_cards[(2 * i) + 1]++;
-           }
-        }
-        std::cout << i + 1 << " Player has " << count_cards[2 * i] << " cards in hand" << std::endl;
-        std::cout << i + 1 << " Player has " << count_cards[(2 * i) + 1] << " cards in front of him" << std::endl;
-
-    }
-}
 
 void green_check(char input[MAXINPUTSIZE], Game& game)
 {
@@ -391,15 +120,7 @@ void green_check(char input[MAXINPUTSIZE], Game& game)
         i++;
     }
 }
-/**/
 
-void print_cauldrons(Game* game)
-{
-    for (int i = 0; i < game->number_of_cauldrons; i++)
-    {
-        std::cout << i + 1 << " pile cards: " << std::endl;
-    }
-}
 
 void count_cards(char input[MAXINPUTSIZE], int number_cauldrons, int cards[2 * MAXPLAYERS], int cauldrons[MAXCAULDRONS] = { 0 })
 {
@@ -408,7 +129,6 @@ void count_cards(char input[MAXINPUTSIZE], int number_cauldrons, int cards[2 * M
     int cardcounter = 0;
     if (input[0] >= '0' && input[0] <= '9') //
     {
-        // green_check(input, game); this is required for passing TASK 4a
         if (input[4] == 'l') //pile card counting TASK 3b
         {
             int i = 1;
@@ -468,7 +188,7 @@ void color_check(char input[MAXINPUTSIZE], int colorcheck[MAXCAULDRONS][MAXDECKS
     }
 
 }
-int card_check(int cards[MAXPLAYERS], int number_of_players, int active_player)
+int card_checker(int cards[MAXPLAYERS], int number_of_players, int active_player)
 {
     int card_differential = 0;
     for (int i = 1; i < number_of_players; i++)
@@ -908,7 +628,7 @@ void simple_move(Game* game, int cauldron_values[MAXCAULDRONS])
     }
     i = 0;
     j = 0;
-    while (j < MAXCAULDRONS)
+    while (j < game->number_of_cauldrons)
     {
         if (first_free_color == 0 && cauldron_values[j] + game->players[game->active_index-1].hand.cards[first_free_index] < game->explosion_threshold)
         {
@@ -917,6 +637,7 @@ void simple_move(Game* game, int cauldron_values[MAXCAULDRONS])
             {
                 if (game->cauldrons[j].cards[i] == 0)
                 {
+                    
                     game->cauldrons[j].cards[i] = card_value;
                     game->cauldrons[j].colors[i] = first_free_color;
                     game->players[game->active_index-1].hand.cards[first_free_index] = 0;
@@ -927,12 +648,37 @@ void simple_move(Game* game, int cauldron_values[MAXCAULDRONS])
                 i++;
             }
         }
+        else if (first_free_color != 0 && j == game->number_of_cauldrons - 1 )
+        {
+            while (i < game->number_of_cauldrons)
+            {
+                if (cauldron_colors[i] == 0)
+                {
+                    for (int k = 0; k < MAXDECKUPDATED; k++)
+                    {
+                        if (game->cauldrons[i].cards[k] == 0)
+                        {
+                            
+                            game->cauldrons[i].cards[k] = card_value;
+                            game->cauldrons[i].colors[k] = first_free_color;
+                            game->players[game->active_index - 1].hand.cards[first_free_index] = 0;
+                            game->players[game->active_index - 1].hand.colors[first_free_index] = 0;
+                            game->players[game->active_index - 1].handcards--;
+                            return;
+                        }
+                        
+                    }
+                }
+                i++;
+            }
+        }
         else if (first_free_color == cauldron_colors[j])
         {
             while (i < MAXDECKUPDATED)
             {
                 if (game->cauldrons[j].cards[i] == 0)
                 {
+                    
                     game->cauldrons[j].cards[i] = card_value;
                     game->cauldrons[j].colors[i] = first_free_color;
                     game->players[game->active_index - 1].hand.cards[first_free_index] = 0;
@@ -943,7 +689,9 @@ void simple_move(Game* game, int cauldron_values[MAXCAULDRONS])
                 i++;
             }
         }
+
         j++;
+
     }
 }
 
@@ -995,8 +743,9 @@ void print_gamestate(Game* game)
 }
 
 
-void cauldron_explosion(Game* game)
+void cauldron_explosion(Game* game, int cauldrons[MAXCAULDRONS])
 {
+    int cards_transferred = 0;
     for (int i = 0; i < MAXCAULDRONS; i++) 
     {
         int cauldron_sum = 0;
@@ -1019,7 +768,11 @@ void cauldron_explosion(Game* game)
                     game->cauldrons[i].cards[j] = 0;
                     game->cauldrons[i].colors[j] = 0;
                     j++;
+                    cards_transferred++;
+                    
+                    
                 }
+                
                 else if (game->active_index == 1)
                 {
                     game->players[game->number_of_players-1].deck.cards[game->players[game->number_of_players - 1].deckcards + j] = game->cauldrons[i].cards[j];
@@ -1027,6 +780,17 @@ void cauldron_explosion(Game* game)
                     game->cauldrons[i].cards[j] = 0;
                     game->cauldrons[i].colors[j] = 0;
                     j++;
+                    cards_transferred++;
+                    
+                    
+                }
+                if (game->active_index > 1)
+                {
+                    game->players[game->active_index - 2].deckcards += cards_transferred;
+                }
+                else if (game->active_index == 1)
+                {
+                    game->players[game->number_of_players - 1].deckcards += cards_transferred;
                 }
             }
             return;
@@ -1034,14 +798,199 @@ void cauldron_explosion(Game* game)
     }
 }
 
+void round_end(Game* game)
+{
+    int card_scores[MAXPLAYERS][MAXCAULDRONS+1] = { 0 };
+    for (int i = 0; i < game->number_of_players; i++)
+    {
+        if (game->players[i].handcards != 0)
+        {
+            
+            return;
+        }
+    }
+    game->end = 1;
+    for (int i = 0; i < game->number_of_players; i++)
+    {
+        for (int j = 0; j < MAXDECKUPDATED; j++) 
+        {
+            if (game->players[i].deck.cards[j] != 0)
+            {
+                card_scores[i][game->players[i].deck.colors[j]]++;
+            }
+        }
+    }
+
+    for (int i = 0; i < game->number_of_players; i++)
+    {
+        for (int j = 0; j < MAXDECKUPDATED; j++)
+        {
+            
+            if (game->players[i].deck.cards[j] != 0)
+            {
+                if (game->players[i].deck.colors[j] == 0)
+                {
+                    game->players[i].points+=2;
+                }
+                else 
+                {
+                    game->players[i].points++;
+                }
+            }
+        }
+    }
+    for (int i = 0; i < MAXCAULDRONS + 1; i++)
+    {
+        int tempmax = card_scores[0][i];
+        int tempindex = 0;
+        int appearanceToken = 0;
+
+        for (int j = 0; j < game->number_of_players; j++)
+        {
+            if (i == 0)
+            {
+                card_scores[j][i] = 0;
+            } 
+            if (card_scores[j][i] > tempmax)
+            {
+                tempmax = card_scores[j][i];
+                appearanceToken = 1;
+            }
+            else if (card_scores[j][i] == tempmax)
+            {
+                appearanceToken++;
+            }
+
+        }
+        for (int j = 0; j < game->number_of_players; j++)
+        {
+            if (card_scores[j][i] < tempmax)
+            {
+                card_scores[j][i] = 0;
+            }
+            else if ((card_scores[j][i] = tempmax) && appearanceToken > 1)
+            {
+                card_scores[j][i] = 0;
+            }
+        }
+    }
+
+    for (int j = 0; j < MAXCAULDRONS + 1; j++)
+    {
+        
+        for (int i = 0; i < game->number_of_players; i++)
+        {
+            if (card_scores[i][j] != 0)
+            {
+                game->players[i].points -= card_scores[i][j];
+                std::cout << "Na kolor " << COLORS[j] << " odporny jest gracz " << i+1 << std::endl;
+            }
+
+        }
+       
+    }
+
+    for (int i = 0; i < game->number_of_players; i++)
+    {
+        std::cout << "Wynik gracza " << i + 1 << " = " << game->players[i].points << std::endl;
+    }
+}
+
+void save_gamestate(Game* game, FILE* fp)
+{
+    fprintf(fp, "active player = %d \n", game->active_index);
+    fprintf(fp, "players number = %d \n", game->number_of_players);
+    fprintf(fp, "explosion threshold = %d \n", game->explosion_threshold);
+    for (int i = 0; i < game->number_of_players; i++)
+    {
+        fprintf(fp, "%d player hand cards: ", i + 1);
+        for (int j = 0; j < game->players[i].handcards; j++)
+        {
+            if (game->players[i].hand.cards[j] != 0)
+            {
+                fprintf(fp, "%d %s ", game->players[i].hand.cards[j], COLORS[game->players[i].hand.colors[j]]);
+            }
+        }
+        fprintf(fp, "\n");
+        fprintf(fp, "%d player deck cards: ", i + 1);
+        for (int j = 0; j < game->players[i].deckcards; j++)
+        {
+            if (game->players[i].hand.cards[j] != 0)
+            {
+                fprintf(fp, "%d %s ", game->players[i].deck.cards[j], COLORS[game->players[i].deck.colors[j]]);
+            }
+            
+        }
+        fprintf(fp, "\n");
+    }
+    for (int i = 0; i < game->number_of_cauldrons; i++)
+    {
+        fprintf(fp, "%d pile cards: ", i + 1);
+        for (int j = 0; j < game->cauldron_capacity[i]; j++)
+        {
+            if (game->cauldrons[i].cards[j] != 0)
+            {
+                fprintf(fp, "%d %s ", game->cauldrons[i].cards[j], COLORS[game->cauldrons[i].colors[j]]);
+
+            }
+        }
+        fprintf(fp, "\n");
+    }
+    
+}
 
 
-int main()
+
+
+int main(int argc, char* argv[])
 {
 
     Game game;
+    
+    
+    FILE *fp = fopen(argv[1], "w");
+    game.number_of_players = atoi(argv[2]);
+    game.number_of_cauldrons = atoi(argv[3]);
+    game.explosion_threshold = atoi(argv[4]);
+    game.number_of_greens = atoi(argv[5]);
+    game.value_of_greens = atoi(argv[6]);
+    game.number_of_cards = atoi(argv[7]);
+    
+    for (int i = 0; i < game.number_of_greens; i++)
+    {
+        game.main_deck.cards[i] = game.value_of_greens;
+    }
+    
+    int indextoken = 0;
+    for (int j = 0; j < game.number_of_cauldrons; j++)
+    {
+        
+        for (int i = 0; i < game.number_of_cards; i++)
+        {
+            game.main_deck.cards[game.number_of_greens + indextoken] = atoi(argv[8 + i]);
+            game.main_deck.colors[game.number_of_greens + indextoken] = j+1;
+            indextoken++;
 
-    /*
+        }
+    }
+    deal_cards(&game);
+    print_gamestate(&game);
+    save_gamestate(&game, fp);
+    for (int i = 0; i < game.number_of_cauldrons*game.number_of_cards + game.number_of_greens; i++)
+    {
+        std::cout << game.main_deck.cards[i] << " ";
+    }
+    std::cout << std::endl;
+    for (int i = 0; i < game.number_of_cauldrons * game.number_of_cards + game.number_of_greens; i++)
+    {
+        std::cout << game.main_deck.colors[i] << " ";
+    }
+
+
+    fclose(fp);
+    FILE* fpr = fopen("game_state.txt", "r");
+    
+   /*
     THIS IS NEEDED FOR TASKS 1/2
     std::cin >> game.number_of_players;
     assert((game.number_of_players >= 2) && (game.number_of_players <= 6));
@@ -1091,250 +1040,306 @@ int main()
     int colorcounter[MAXCAULDRONS] = { 0 };
     int colorcheck[MAXCAULDRONS][MAXDECKSIZE] = { 0 };
     int playercards[MAXPLAYERS] = { 0 };
-
-    while (fgets(input, MAXINPUTSIZE, stdin))
+    while (game.end == 0)
     {
-        if (input[0] == '\n')
+        while (fgets(input, MAXINPUTSIZE, fpr))
         {
-            break; //end loop if you encounter end of line symbol as the first letter of a line
-        }
-        if (input[0] == 'a')
-        {
-            game.active_index = input[16] - 48;
-        }
-        if (input[0] == 'p')
-        {
-            game.number_of_players = input[17] - 48; //get amount of players from user input/save file
-        }
-        if (input[0] == 'e')
-        {
-            if (input[24] -48 >= 0 && input[24]- 48 <=9)
+            if (input[0] == '\n')
             {
-                game.explosion_threshold = (input[22] - 48) * 100 + (input[23] - 48) * 10 + input[24] - 48;
-                
-                
+                break; //end loop if you encounter end of line symbol as the first letter of a line
+            }
+            if (input[0] == 'a')
+            {
+                game.active_index = input[16] - 48;
+            }
+            if (input[0] == 'p')
+            {
+                game.number_of_players = input[17] - 48; //get amount of players from user input/save file
+            }
+            if (input[0] == 'e')
+            {
+                if (input[24] - 48 >= 0 && input[24] - 48 <= 9)
+                {
+                    game.explosion_threshold = (input[22] - 48) * 100 + (input[23] - 48) * 10 + input[24] - 48;
+
+
+                }
+                else
+                {
+                    game.explosion_threshold = (input[22] - 48) * 10 + (input[23] - 48);
+
+                }
+            }
+
+            //count_cards(input, game.number_of_cauldrons, cards, cauldrons);
+            color_count(colorcounter, colorcheck, input);
+            player_cards_count(input, &game);
+            green_check(input, game);
+
+
+            if (input[9] == 'h')
+            {
+                players_read_cards(input, &game, 1, 0);
+            }
+            else if (input[9] == 'd')
+            {
+                players_read_cards(input, &game, 1, 1);
+            }
+
+
+            if (input[4] == 'l')
+            {
+                cauldron_read_cards(input, &game);
+                //game.number_of_cauldrons++;
+                int i = 1;
+                int j = 0;
+                while (input[i]) {
+
+                    if (input[i] > '0' && input[i] <= '9')
+                    {
+                        int a = input[i] - 48;
+                        if (input[i + 1] == 32) {
+
+                            cauldrons_values[input[0] - 49] += (input[i] - 48);
+                            cauldron_color_check(input, cauldrons_colors, i + 2, j++);
+                        }
+                        else
+                        {
+                            cauldrons_values[input[0] - 49] += (input[i] - 48) * 10 + (input[i + 1] - 48);
+                            cauldron_color_check(input, cauldrons_colors, i + 3, j++);
+                            i++;
+                        }
+
+
+                    }
+
+
+
+
+
+                    i++;
+                }
+            }
+
+
+
+        }
+
+
+
+        // FOR TASK 4A
+        int card_check = 1;
+        for (int i = 1; i < MAXCAULDRONS; i++)
+        {
+            if (colorcounter[0] != colorcounter[i] && colorcounter[i] != 0)
+            {
+                card_check = 0;
+            }
+        }
+
+
+        for (int i = 0; i < game.number_of_players; i++)
+        {
+            playercards[i] = game.players[i].handcards;
+        }
+        int gamestate = 0;
+        int card_differential = card_checker(playercards, game.number_of_players, game.active_index);
+        if (card_differential != 0)
+        {
+            std::cout << "The number of players cards on hand is wrong" << std::endl;
+            gamestate++;
+        }
+
+
+        //GAMESTATE CHECKING FOR TASK 6
+        for (int i = 0; i < MAXCAULDRONS; i++)
+        {
+            for (int j = 1; j < CARDSINCAULDRON; j++)
+            {
+                if (cauldrons_colors[i][0] != cauldrons_colors[i][j] && cauldrons_colors[i][j] != 0)
+                {
+                    std::cout << "Two different colors were found on the " << i + 1 << " pile " << std::endl;
+                    gamestate++;
+                    break;
+                }
+            }
+        }
+
+
+        for (int i = 0; i < MAXCAULDRONS; i++)
+        {
+            if (cauldrons_values[i] >= game.explosion_threshold)
+            {
+                std::cout << "Pile number " << i + 1 << " should explode earlier" << std::endl;
+                gamestate++;
+            }
+        }
+        if (gamestate == 0)
+        {
+
+            std::cout << "Current state of the game is ok " << std::endl;
+        }
+
+        round_end(&game);
+        fclose(fpr);
+        FILE* fpw = fopen("game_state.txt", "w");
+        if (gamestate != 0)
+        {
+            return 0;
+        }
+        if (game.end == 1)
+        {
+            save_gamestate(&game, fpw);
+            fclose(fpw);
+            return 0;
+        }
+        else
+        {
+            
+            simple_move(&game, cauldrons_values);
+            game.active_index = active_id(game.active_index, game.number_of_players);
+            cauldron_explosion(&game, cauldrons);
+            print_gamestate(&game);
+            save_gamestate(&game, fpw);
+            fclose(fpw);
+            for (int i = 0; i < game.number_of_cauldrons; i++)
+            {
+                game.cauldron_capacity[i] = 0;
+                for (int j = 0; j < MAXDECKUPDATED; j++)
+                {
+                    if (game.cauldrons[i].cards[j] != 0)
+                    {
+                        game.cauldron_capacity[i]++;
+                    }
+                }
+            }
+            for (int i = 0; i < game.number_of_players; i++)
+            {
+                game.players[i].deckcards = 0;
+                for (int j = 0; j < MAXDECKUPDATED; j++)
+                {
+                    if (game.players[i].deck.cards[j] != 0)
+                    {
+                        game.players[i].deckcards++;
+                    }
+                }
+            }
+            for (int i = 0; i < game.number_of_players; i++)
+            {
+                game.players[i].handcards = 0;
+                for (int j = 0; j < MAXDECKUPDATED; j++)
+                {
+                    if (game.players[i].hand.cards[j] != 0)
+                    {
+                        game.players[i].handcards++;
+                    }
+                }
+            }
+
+
+
+
+
+
+            //TASK 5
+            for (int i = 0; i < MAXCAULDRONS; i++)
+            {
+                qsort(colorcheck[i], 0, MAXDECKSIZE - 1);
+            }
+            int cardsdifferent = 0;
+            for (int i = 0; i < game.number_of_cauldrons - 1; i++)
+            {
+                for (int j = 0; j < MAXDECKSIZE; j++)
+                {
+                    if (colorcheck[i][j] != colorcheck[i + 1][j])
+                    {
+                        cardsdifferent = 1;
+                    }
+                }
+            }
+
+            if (cardsdifferent == 0) {
+                std::cout << "The values of cards of all colors are identical:" << std::endl;
+                for (int i = 0; i < MAXDECKSIZE; i++)
+                {
+                    if (colorcheck[0][i] != 0) {
+                        std::cout << colorcheck[0][i] << " ";
+                    }
+                }
+                std::cout << std::endl;
             }
             else
             {
-                game.explosion_threshold = (input[22] - 48) * 10 + (input[23] - 48);
-                
-            }
-        }
-
-        count_cards(input, game.number_of_cauldrons, cards, cauldrons);
-        color_count(colorcounter, colorcheck, input);
-        player_cards_count(input, &game);
-
-
-        if (input[9] == 'h')
-        {
-            players_read_cards(input, &game, 1, 0);
-        }
-        else if (input[9] == 'd')
-        {
-            players_read_cards(input, &game, 1, 1);
-        }
-     
-
-        if (input[4] == 'l')
-        {
-            cauldron_read_cards(input, &game);
-            game.number_of_cauldrons++;
-            int i = 1;
-            int j = 0;
-            while (input[i]) {
-
-                if (input[i] > '0' && input[i] <= '9')
+                std::cout << "The values of cards of all colors are not identical:" << std::endl;
+                for (int i = 0; i < game.number_of_cauldrons; i++)
                 {
-                    int a = input[i] - 48;
-                    if (input[i + 1] == 32) {
-
-                        cauldrons_values[input[0] - 49] += (input[i] - 48);
-                        cauldron_color_check(input, cauldrons_colors, i + 2, j++);
-                    }
-                    else
+                    std::cout << COLORS[i] << " cards values: ";
+                    for (int j = 0; j < MAXDECKSIZE; j++)
                     {
-                        cauldrons_values[input[0] - 49] += (input[i] - 48) * 10 + (input[i + 1] - 48);
-                        cauldron_color_check(input, cauldrons_colors, i + 3, j++);
-                        i++;
+                        if (colorcheck[i][j] != 0)
+                        {
+                            std::cout << colorcheck[i][j] << " ";
+                        }
                     }
-
-
+                    std::cout << std::endl;
                 }
-
-
-
-
-
-                i++;
             }
-        }
 
 
 
-    }
-    /*
-    REQUIRED FOR TASK 4A
-    int card_check = 1;
-    for (int i = 1; i < MAXCAULDRONS; i++)
-    {
-        if (colorcounter[0] != colorcounter[i] && colorcounter[i] != 0)
-        {
-            card_check = 0;
-        }
-    }
-    */
-    /*
-    for (int i = 0; i < game.number_of_players; i++)
-    {
-        playercards[i] = game.players[i].handcards;
-    }
-    int gamestate = 0;
-    int card_differential = card_check(playercards, game.number_of_players, game.active_index);
-    if (card_differential != 0)
-    {
-        std::cout << "The number of players cards on hand is wrong" << std::endl;
-        gamestate++;
-    }
 
-    
-    GAMESTATE CHECKING FOR TASK 6
-    for (int i = 0; i < MAXCAULDRONS; i++)
-    {
-        for (int j = 1; j < CARDSINCAULDRON; j++)
-        {
-            if (cauldrons_colors[i][0] != cauldrons_colors[i][j] && cauldrons_colors[i][j] != 0)
+            //TASK 4A
+            if (card_check == 1)
             {
-                std::cout << "Two different colors were found on the " << i + 1 << " pile " << std::endl;
-                gamestate++;
-                break;
+                std::cout << "The number cards of all colors is equal: " << colorcounter[0] << std::endl;
             }
-        }
-    }
-
-
-    for (int i = 0; i < MAXCAULDRONS; i++)
-    {
-        if (cauldrons_values[i] >= game.explosion_threshold)
-        {
-            std::cout << "Pile number " << i + 1 << " should explode earlier" << std::endl;
-            gamestate++;
-        }
-    }
-    if (gamestate == 0)
-    {
-
-        std::cout << "Current state of the game is ok " << std::endl;
-    }
-    */
-    simple_move(&game, cauldrons_values);
-    game.active_index=active_id(game.active_index, game.number_of_players);
-    cauldron_explosion(&game);
-    print_gamestate(&game);
-
-
-
-    /*
-    THIS IS REQUIRED FOR TASK 5
-    for (int i = 0; i < MAXCAULDRONS; i++)
-    {
-        qsort(colorcheck[i], 0, MAXDECKSIZE - 1);
-    }
-    int cardsdifferent = 0;
-    for (int i = 0; i < game.number_of_cauldrons-1; i++)
-    {
-        for (int j = 0; j < MAXDECKSIZE; j++)
-        {
-            if (colorcheck[i][j] != colorcheck[i + 1][j])
+            else
             {
-                cardsdifferent = 1;
-            }
-        }
-    }
-
-    if (cardsdifferent == 0) {
-        std::cout << "The values of cards of all colors are identical:" << std::endl;
-        for (int i = 0; i < MAXDECKSIZE; i++)
-        {
-            if (colorcheck[0][i] != 0) {
-                std::cout << colorcheck[0][i] << " ";
-            }
-        }
-    }
-    else
-    {
-        std::cout << "The values of cards of all colors are not identical:" << std::endl;
-        for (int i = 0; i < game.number_of_cauldrons; i++)
-        {
-            std::cout << COLORS[i] << " cards values: ";
-            for (int j = 0; j < MAXDECKSIZE; j++)
-            {
-                if (colorcheck[i][j] != 0)
+                std::cout << "At least two colors with a different number of cards were found:" << std::endl;
+                for (int j = 0; j < MAXCAULDRONS; j++)
                 {
-                    std::cout << colorcheck[i][j] << " ";
+                    if (colorcounter[j] != 0)
+                    {
+                        std::cout << COLORS[j] << " cards are " << colorcounter[j] << std::endl;
+
+                    }
                 }
             }
-            std::cout<<std::endl;
-        }
-    }
 
-    */
 
-    /*
-    SOLUTION TO TASK 4A
-    if (card_check==1)
-    {
-        std::cout << "The number cards of all colors is equal: " << colorcounter[0] << std::endl;
-    }
-    else
-    {
-        std::cout << "At least two colors with a different number of cards were found:" << std::endl;
-        for (int j = 0; j < MAXCAULDRONS; j++)
-        {
-            if (colorcounter[j] != 0)
+
+            //SOLUTION TO TASK 3 ON STOS
+            for (int i = 0; i < game.number_of_players; i++)
             {
-                std::cout << COLORS[j] << " cards are " << colorcounter[j] << std::endl;
-
+                std::cout << i + 1 << " player has " << game.players[i].handcards << " cards on hand" << std::endl;
+                std::cout << i + 1 << " player has " << game.players[i].deckcards << " cards in front of him" << std::endl;
             }
+
+            for (int i = 0; i < game.number_of_cauldrons; i++)
+            {
+                std::cout << "there are " << game.cauldron_capacity[i]<< " cards on " << i + 1 << " pile " << std::endl;
+            }
+
+
+
+        
+             //THIS IS REQUIRED TO PASS TASK 4A
+            if(game.value_of_greens == -1)
+            {
+                std::cout << "Different green cards values occurred";
+            }
+            else if (game.number_of_greens == 0)
+            {
+                std::cout << "Green cards does not exist";
+            }
+            else
+            {
+                std::cout << "Found " << game.number_of_greens << " green cards, all with " << game.value_of_greens << " value" <<std::endl;
+            }
+
+            std::cout << std::endl << std::endl;
+        
         }
     }
-    */
-
-    /*
-     SOLUTION TO TASK 3 ON STOS
-    for (int i = 0; i < game.number_of_players ;i++)
-    {
-        std::cout << i + 1 << " player has " << cards[2 * i] << " cards on hand" << std::endl;
-        std::cout << i + 1 << " player has " << cards[(2 * i) + 1] << " cards in front of him" << std::endl;
-    }
-
-    for (int i=0; i<game.number_of_cauldrons; i++)
-    {
-        std::cout << "there are " << cauldrons[i] << " cards on " << i + 1 << " pile " << std::endl;
-    }
-
-    */
-
-    /*
-     THIS IS REQUIRED TO PASS TASK 4A
-    if(game.value_of_greens == -1)
-    {
-        std::cout << "Different green cards values occurred";
-    }
-    else if (game.number_of_greens == 0)
-    {
-        std::cout << "Green cards does not exist";
-    }
-    else
-    {
-        std::cout << "Found " << game.number_of_greens << " green cards, all with " << game.value_of_greens << " value";
-    }
-    */
-    /* SOLUTION TO TASKS 1/2 ON STOS
-    print_deck(&game);
-    print_cauldrons(&game);
-    count_cards(&game);
-    */
-
     return 0;
 }
