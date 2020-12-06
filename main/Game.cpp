@@ -12,6 +12,7 @@ struct Game {
 	int value_of_greens = 0;
 	int number_of_cards = 0;
 	int cauldron_capacity[MAXCAULDRONS] = { 0 };
+	int cauldron_colors[MAXCAULDRONS] = { 0 };
 	Deck main_deck;
 	Player players[MAXPLAYERS];
 	Deck cauldrons[MAXCAULDRONS];

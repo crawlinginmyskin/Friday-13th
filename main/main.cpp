@@ -114,7 +114,7 @@ void green_check(char input[MAXINPUTSIZE], Game& game)
             }
 
 
-            game.number_of_greens++;
+            //game.number_of_greens++;
 
         }
         i++;
@@ -592,6 +592,7 @@ void cauldron_read_cards(char input[MAXINPUTSIZE], Game* game)
 
 void simple_move(Game* game, int cauldron_values[MAXCAULDRONS])
 {
+
     int j = 0;
     int first_free_index = 0;
     int first_free_color = 0;
@@ -936,8 +937,300 @@ void save_gamestate(Game* game, FILE* fp)
         }
         fprintf(fp, "\n");
     }
+}
+
+
+
+
+void small_move(Game* game)
+{
+    int cauldron_values[MAXCAULDRONS] = { 0 };
+    int cauldron_colors[MAXCAULDRONS] = { 0 };
+    int lowest_handcards[MAXCAULDRONS + 1] = { 20, 20, 20, 20, 20, 20, 20 };
+    for (int i = 0; i < game->number_of_cauldrons; i++)
+    {
+        for (int j = 0; j < MAXDECKUPDATED; j++)
+        {
+            if (game->cauldrons[i].colors[j] != 0)
+            {
+                game->cauldron_colors[i] = game->cauldrons[i].colors[j];
+
+            }
+        }
+
+    }
+    for (int i = 0; i < game->number_of_cauldrons; i++)
+    {
+        for (int j = 0; j < MAXDECKUPDATED; j++)
+        {
+            cauldron_values[i] += game->cauldrons[i].cards[j];
+        }
+    }
+    int smallest_number = 20;
+    int smallest_color = 0;
+    int color_index = 0;
+    int smallest_number_occurences = 0;
+    int smallest_index = 0;
+    int smallest_index_color = 0;
+    for (int i = 0; i < MAXDECKUPDATED + 1; i++)
+    {
+
+        if (game->players[game->active_index - 1].hand.cards[i] < lowest_handcards[game->players[game->active_index - 1].hand.colors[i]] && game->players[game->active_index - 1].hand.cards[i] != 0)
+        {
+            lowest_handcards[game->players[game->active_index - 1].hand.colors[i]] = game->players[game->active_index - 1].hand.cards[i];
+        }
+
+
+    }
+    for (int i = 0; i < MAXCAULDRONS + 1; i++)
+    {
+        if (lowest_handcards[i] < smallest_number)
+        {
+            smallest_number = lowest_handcards[i];
+            smallest_color = i;
+        }
+    }
+    ;
+    for (int i = 0; i < MAXCAULDRONS + 1; i++)
+    {
+        if (lowest_handcards[i] == smallest_number)
+        {
+            smallest_number_occurences++;
+        }
+    }
+    if (smallest_color == 0)
+    {
+        int cauldron_min = game->explosion_threshold;
+        int cauldron_id = 0;
+        for (int i = 0; i < game->number_of_cauldrons; i++)
+        {
+            if (cauldron_min > cauldron_values[i])
+            {
+                cauldron_min = cauldron_values[i];
+                cauldron_id = i;
+            }
+        }
+        for (int i = 0; i < MAXDECKUPDATED; i++)
+        {
+            if (game->players[game->active_index - 1].hand.cards[i] == smallest_number && smallest_number + cauldron_values[cauldron_id] < game->explosion_threshold)
+            {
+                for (int j = 0; j < MAXDECKUPDATED; j++)
+                {
+                    if (game->cauldrons[cauldron_id].cards[j] == 0)
+                    {
+                        game->cauldrons[cauldron_id].cards[j] = game->players[game->active_index - 1].hand.cards[i];
+                        game->players[game->active_index - 1].hand.cards[i] = 0;
+                        game->players[game->active_index - 1].handcards--;
+                        return;
+                    }
+                }
+            }
+        }
+
+
+    }
+    if (smallest_number_occurences == 1)
+    {
+        for (int j = 0; j < game->number_of_cauldrons; j++)
+        {
+            if (game->cauldron_colors[j] == smallest_color || game->cauldron_colors[j] == 0)
+            {
+                for (int i = 0; i < MAXDECKUPDATED; i++)
+                {
+                    if (game->players[game->active_index - 1].hand.cards[i] == smallest_number)
+                    {
+                        for (int k = 0; k < MAXDECKUPDATED; k++)
+                        {
+                            if (game->cauldrons[j].cards[k] == 0)
+                            {
+                                smallest_index = i;
+                                smallest_index_color = game->players[game->active_index - 1].hand.colors[i];
+                                if (smallest_number + cauldron_values[j] < game->explosion_threshold)
+                                {
+                                    game->cauldrons[j].cards[k] = smallest_number;
+                                    game->cauldrons[j].colors[k] = smallest_index_color;
+                                    game->players[game->active_index - 1].hand.cards[smallest_index] = 0;
+                                    game->players[game->active_index - 1].hand.colors[smallest_index] = 0;
+                                    game->players[game->active_index - 1].handcards--;
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+
+        int smallest_cauldron_id = 0;
+        int smallest_cauldron_value = game->explosion_threshold;
+        int smallest_cauldron_color = 0;
+        int index = 0;
+        for (int i = 0; i < MAXCAULDRONS + 1; i++)
+        {
+            if (lowest_handcards[i] != smallest_number)
+            {
+                lowest_handcards[i] = 0;
+            }
+        }
+        for (int i = 0; i < MAXCAULDRONS + 1; i++)
+        {
+            int color_appearance = 0;
+            if (lowest_handcards[i] != 0)
+            {
+                for (int j = 0; j < MAXCAULDRONS; j++)
+                {
+                    if (game->cauldron_colors[j] == i)
+                    {
+                        color_appearance++;
+                        if (cauldron_values[j] < smallest_cauldron_value)
+                        {
+                            smallest_cauldron_value = cauldron_values[j];
+                            smallest_cauldron_id = j;
+                            smallest_cauldron_color = game->cauldron_colors[j];
+                            index = i;
+                        }
+                    }
+                    else if (color_appearance == 0)
+                    {
+                        for (int k = 0; k < MAXCAULDRONS; k++)
+                        {
+                            if (cauldron_values[k] < smallest_cauldron_value)
+                            {
+                                smallest_cauldron_value = cauldron_values[k];
+                                smallest_cauldron_id = k;
+                                smallest_cauldron_color = game->cauldron_colors[k];
+                                index = i;
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
+        for (int i = 0; i < MAXDECKUPDATED; i++)
+        {
+            if (game->players[game->active_index - 1].hand.cards[i] == smallest_number && game->players[game->active_index - 1].hand.colors[i] == index)
+            {
+                smallest_index = i;
+                smallest_index_color = game->players[game->active_index - 1].hand.colors[i];
+            }
+        }
+
+
+
+        for (int i = 0; i < MAXDECKUPDATED; i++)
+        {
+            if (game->cauldrons[smallest_cauldron_id].cards[i] != 0 && smallest_number + cauldron_values[smallest_cauldron_id] < game->explosion_threshold)
+            {
+                game->cauldrons[smallest_cauldron_id].cards[i] = smallest_number;
+                game->cauldrons[smallest_cauldron_id].colors[i] = smallest_index_color;
+                game->players[game->active_index - 1].hand.cards[smallest_index] = 0;
+                game->players[game->active_index - 1].hand.colors[smallest_index] = 0;
+                game->players[game->active_index - 1].handcards--;
+                return;
+            }
+        }
+
+
+    }
+
+    
+    int hand_max = 0;
+    int hand_max_id = 0;
+    int hand_max_color = 0;
+    for (int i = 0; i < MAXDECKUPDATED; i++)
+    {
+        if (game->players[game->active_index - 1].hand.cards[i] > hand_max)
+        {
+            hand_max = game->players[game->active_index - 1].hand.cards[i];
+            hand_max_id = i;
+            hand_max_color = game->players[game->active_index - 1].hand.colors[i];
+        }
+    }
+   
+
+    if (hand_max_color == 0)
+    {
+        int smallest_cauldron_value = game->explosion_threshold;
+        int smallest_cauldron_id = 0;
+        for (int j = 0; j < game->number_of_cauldrons; j++)
+        {
+            if (cauldron_values[j] < smallest_cauldron_value)
+            {
+                smallest_cauldron_value = cauldron_values[j];
+                smallest_cauldron_id = j;
+            }
+        }
+        for (int i = 0; i < MAXDECKUPDATED; i++)
+        {
+            if (game->cauldrons[smallest_cauldron_id].cards[i] == 0)
+            {
+                game->cauldrons[smallest_cauldron_id].cards[i] = hand_max;
+                game->players[game->active_index - 1].hand.cards[hand_max_id] = 0;
+                game->players[game->active_index - 1].handcards--;
+                return;
+            }
+        }
+    }
+    for (int i = 0; i < game->number_of_cauldrons; i++)
+    {
+
+        if (game->cauldron_colors[i] == hand_max_color)
+        {
+            for (int j = 0; j < MAXDECKUPDATED; j++)
+            {
+                if (game->cauldrons[i].cards[j] == 0)
+                {
+                    game->cauldrons[i].cards[j] = hand_max;
+                    game->cauldrons[i].colors[j] = hand_max_color;
+                    game->players[game->active_index - 1].hand.cards[hand_max_id] = 0;
+                    game->players[game->active_index - 1].hand.colors[hand_max_id] = 0;
+                    game->players[game->active_index - 1].handcards--;
+                    return;
+                }
+            }
+        }
+
+        if (i == game->number_of_cauldrons)
+        {
+            int smallest_cauldron_value = game->explosion_threshold;
+            int smallest_cauldron_id = 0;
+            for (int j = 0; j < game->number_of_cauldrons; j++)
+            {
+                if (cauldron_values[j] < smallest_cauldron_value && game->cauldron_colors[j] == 0)
+                {
+                    smallest_cauldron_value = cauldron_values[j];
+                    smallest_cauldron_id = j;
+                }
+            }
+            for (int j = 0; j < MAXDECKUPDATED; j++)
+            {
+                if (game->cauldrons[smallest_cauldron_id].cards[j] != 0)
+                {
+                    game->cauldrons[smallest_cauldron_id].cards[j] = hand_max;
+                    game->cauldrons[smallest_cauldron_id].colors[j] = hand_max_color;
+                    game->players[game->active_index - 1].hand.cards[hand_max_id] = 0;
+                    game->players[game->active_index - 1].hand.colors[hand_max_id] = 0;
+                    game->players[game->active_index - 1].handcards--;
+                    return;
+                }
+
+                
+            }
+
+        }
+        
+    }
+
+
     
 }
+
+
 
 
 
@@ -976,7 +1269,7 @@ int main(int argc, char* argv[])
     deal_cards(&game);
     print_gamestate(&game);
     save_gamestate(&game, fp);
-    for (int i = 0; i < game.number_of_cauldrons*game.number_of_cards + game.number_of_greens; i++)
+    /*for (int i = 0; i < game.number_of_cauldrons*game.number_of_cards + game.number_of_greens; i++)
     {
         std::cout << game.main_deck.cards[i] << " ";
     }
@@ -985,6 +1278,7 @@ int main(int argc, char* argv[])
     {
         std::cout << game.main_deck.colors[i] << " ";
     }
+    */
 
 
     fclose(fp);
@@ -1195,13 +1489,16 @@ int main(int argc, char* argv[])
         }
         else
         {
+
+            small_move(&game);
             
-            simple_move(&game, cauldrons_values);
+            //simple_move(&game, cauldrons_values);
             game.active_index = active_id(game.active_index, game.number_of_players);
             cauldron_explosion(&game, cauldrons);
             print_gamestate(&game);
             save_gamestate(&game, fpw);
             fclose(fpw);
+            
             for (int i = 0; i < game.number_of_cauldrons; i++)
             {
                 game.cauldron_capacity[i] = 0;
